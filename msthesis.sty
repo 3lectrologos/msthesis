@@ -96,18 +96,23 @@
 % Chapter colorbox definition
 \fboxrule=1pt
 \newcommand{\colorchapter}[1]{%
-  \fcolorbox{cyan!50!black}{cyan!40!black}{%
-  \parbox{\dimexpr 1.3in+\hoffset+\oddsidemargin+\textwidth-2\fboxsep-2\fboxrule}
-  {\vspace{0.4em}
-   \hspace{\dimexpr 1in+\hoffset+\oddsidemargin-4pt}
-   \if\ttl@key@numberless
-     \color{white}{\fontsize{40}{40}\selectfont\textrm{\textbf{\thechapter}}}
-     \quad\quad\LARGE\color{white}\raisebox{0.5em}{#1}\vspace{0.4em}%
-   \else
-     \color{white}{\LARGE\selectfont #1}
-     \vspace{0.4em}
-   \fi%
-  }}}
+  \if\ttl@key@numberless
+    \fcolorbox{cyan!50!black}{cyan!40!black}{%
+    \parbox[b][3em][c]{\dimexpr 1.3in+\hoffset+\oddsidemargin+\textwidth-2\fboxsep-2\fboxrule}
+    {%
+    \hspace{\dimexpr 1in+\hoffset+\oddsidemargin-8pt}
+    \color{white}{\fontsize{45}{45}\selectfont\textrm{\textbf{\thechapter}}}
+    \quad\quad\LARGE\raisebox{0.5em}{#1}}%
+    }
+  \else
+    \fcolorbox{cyan!50!black}{cyan!40!black}{%
+    \parbox[b][2em][c]{\dimexpr 1.3in+\hoffset+\oddsidemargin+\textwidth-2\fboxsep-2\fboxrule}
+    {%
+    \hspace{\dimexpr 1in+\hoffset+\oddsidemargin-4pt}
+    \LARGE\color{white}#1}%
+    }
+  \fi%
+}
 
 % Chapter title format
 \titleformat{\chapter}[block]
@@ -122,23 +127,23 @@
 \fboxrule=1pt
 \newcommand{\colorsection}[1]{%
   \fcolorbox{cyan!50!black}{cyan!40!black}{%
-  \parbox{\dimexpr 1in+\hoffset+\oddsidemargin+\textwidth-2\fboxsep-2\fboxrule+2.2em}
-  {\vspace{0.1em}
+  \parbox[b][1.2em][c]{\dimexpr 1in+\hoffset+\oddsidemargin+\textwidth-2\fboxsep-2\fboxrule+2.2em}
+  {%
    \ifodd\value{page}
      \hspace{\dimexpr 1in+\hoffset+\oddsidemargin-2pt}
      \Large\color{white}
      \if\ttl@key@numberless
        \textbf{\thesection}\quad
      \fi
-     #1\vspace{0.1em}%
+     #1
    \else
      \hspace{14pt}
      \Large\color{white}
      \if\ttl@key@numberless
        \textbf{\thesection}\quad
      \fi
-     #1\vspace{0.1em}%
-   \fi
+     #1
+   \fi%
   }}}
 
 % Section title format
