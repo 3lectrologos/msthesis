@@ -1,0 +1,454 @@
+﻿\chapter{Appendix}
+
+\section{Proof of Theorem~\ref*{thm:acl}} \label{sect:app_acl}
+
+\begin{lemma}
+\label{lem:srin1}
+For any $\delta \in (0, 1)$, if $\beta_t = 2\log(|D|\pi_t/\delta)$, where
+$\sum_{t\geq1}\pi_t^{-1} = 1$ and $\pi_t > 0$, then the following holds with
+probability at least $1-\delta$
+\begin{align*}
+|f(\*x) - \mu_{t-1}(\*x)| \leq \beta_t^{1/2}\sigma_{t-1}(\*x),\ \forall \*x \in D\ \forall t \geq 1.
+\end{align*}
+In particular, we can choose $\pi_t = \pi^2 t^2/6$.
+\end{lemma}
+\begin{proof}
+See Lemma 5.1 in \cite{srinivas10}.
+\end{proof}
+
+\begin{cor}
+\label{cor:cs}
+For any $\delta \in (0, 1)$ and $\beta_t$ as above, the following holds
+with probability at least $1-\delta$
+\begin{align*}
+f(\*x) \in C_t(\*x),\ \forall \*x \in D\ \forall t \geq 1.
+\end{align*}
+\end{cor}
+
+\begin{lemma}
+\label{lem:wb}
+The following holds for any $t \geq 1$
+\begin{align*}
+a_t(\*x_t) \leq \beta_t^{1/2}\sigma_{t-1}(\*x_t).
+\end{align*}
+\end{lemma}
+\begin{proof}
+By the definition of ambiguity
+\begin{align*}
+a_t(\*x_t) &= \min\{\max(C_t(\*x_t)) - h, h - \min(C_t(\*x_t))\}\\
+           &\leq (\max(C_t(\*x_t)) - \min(C_t(\*x_t)))/2\\
+           &\leq (\max(Q_t(\*x_t)) - \min(Q_t(\*x_t)))/2\\
+           &= \beta_t^{1/2}\sigma_{t-1}(\*x_t).
+\end{align*}
+\end{proof}
+
+\begin{lemma}
+\label{lem:dec}
+While running \acl, $a_t(\*x_t)$ is nonincreasing in $t$.
+\end{lemma}
+\begin{proof}
+From the definition of the confidence region of $\*x_t$ via successive
+intersections $C_t(\*x_t) = C_{t-1}(\*x_t) \cap Q_t(\*x_t)$, it follows that
+\begin{align*}
+	\left.
+		\begin{array}{ll}
+			\max(C_t(\*x_t)) \leq \max(C_{t-1}(\*x_t))\\
+			\min(C_t(\*x_t)) \geq \min(C_{t-1}(\*x_t))
+		\end{array}
+	\right\}
+\Rightarrow a_t(\*x_t) \leq a_{t-1}(\*x_t)
+\end{align*}
+Furthermore, from the selection rule used in \acl
+${\*x_t = \argmax_{\*x\in U_t}(a_t(\*x))}$ and the monotonicity of
+$U_t$ ($U_t \subseteq U_{t-1}$), it follows that
+$a_{t-1}(\*x_t) \leq a_{t-1}(\*x_{t-1})$.
+\end{proof}
+
+\begin{lemma}
+\label{lem:ig}
+Denoting $\*y_t = (y_i)_{1\leq i\leq t}$ and
+$\*f_t = (f(\*x_i))_{1\leq i\leq t}$,
+the information gain for the selected points up to iteration $t$ can be
+expressed in terms of the predictive variances as follows
+\begin{align*}
+I(\*y_t; \*f_t) = \frac{1}{2}\sum_{i=1}^t \log(1 + \sigma^{-2}\sigma_{i-1}^2(\*x_i)).
+\end{align*}
+\end{lemma}
+\begin{proof}
+See Lemma 5.3 in \cite{srinivas10}.
+\end{proof}
+
+\begin{lemma}
+\label{lem:wbound}
+While running \acl with $\beta_t$ as in \lemmaref{lem:srin1}, it holds that
+\begin{align*}
+a_t(\*x_t) \leq \sqrt{\frac{C_1 \beta_t \gamma_t}{4t}},\ \forall t \geq 1,
+\end{align*}
+where $C_1 = 8 / \log(1 + \sigma^{-2})$.
+\end{lemma}
+\begin{proof}
+Similarly to Lemma 5.4 in \cite{srinivas10},
+from \lemmaref{lem:wb} it follows that for any $i \geq 1$
+\begin{align*}
+a_i^2(\*x_i) &\leq \beta_i\sigma_{i-1}^2(\*x_i)\\
+&\leq \beta_i\sigma^2(\sigma^{-2}\sigma_{i-1}^2(\*x_i))\\
+&\leq \beta_i\sigma^2 C_2\log(1 + \sigma^{-2}\sigma_{i-1}^2(\*x_i)),
+\end{align*}
+where $C_2 = \sigma^{-2}/\log(1 + \sigma^{-2})$.
+Using \lemmaref{lem:ig} in the above expression, the fact that $\beta_i$
+is nondecreasing in $i$, and defining $C_1 = 8\sigma^2C_2$,
+we get for any $t \geq 1$
+\begin{align*}
+C_1\beta_t\gamma_t &\geq C_1\beta_t I(\*y_t; \*f_t)\\
+                   &\geq 4\sum_{i=1}^t a_i^2(\*x_i)\\
+                   &\geq \frac{4}{t}\left(\sum_{i=1}^t a_i(\*x_i)\right)^2 \tag*{\textrm{(by Cauchy-Schwarz)}}\\
+                   &= 4t \left(\frac{1}{t}\sum_{i=1}^t a_i(\*x_i)\right)^2\\
+                   &\geq 4t a_t^2(\*x_t) \tag*{\textrm{(by \lemmaref{lem:dec})}}
+\end{align*}
+\end{proof}
+
+\begin{lemma}
+\label{lem:sterm}
+While running \acl,
+if for some $t \geq 1$, $a_t(\*x_t) \leq \epsilon$,
+then $U_{t+1} = \varnothing$.
+\end{lemma}
+\begin{proof}
+Assume that $U_{t+1} \neq \varnothing$, i.e. there exists a point
+$\*x \in U_t$, which does not meet the classification conditions
+(lines~12 and 15) of \algoref{alg:acl}. Consequently, that point
+satisfies $\max(C_{t+1}(\*x)) > h + \epsilon$ and
+$\min(C_{t+1}(\*x)) < h - \epsilon$. It follows that
+\begin{align*}
+\epsilon &< \min\{\max(C_{t+1}(\*x_t))-h, h-\min(C_{t+1}(\*x_t))\}\\
+&= a_{t+1}(\*x)\\
+&\leq a_t(\*x)\\
+&\leq a_t(\*x_t) \tag{by \acl's selection rule},
+\end{align*}
+which contradicts the lemma's assumption.
+\end{proof}
+
+\begin{cor}
+\label{cor:iter}
+The \acl algorithm terminates after at most $T$ iterations, where $T$
+is the smallest positive integer satisfying
+\begin{align*}
+\frac{T}{\beta_T \gamma_T} \geq \frac{C_1}{4\epsilon^2}.
+\end{align*}
+\end{cor}
+
+\begin{lemma}
+\label{lem:prob}
+For any $h\in\mathbb{R}$ and $\delta \in (0, 1)$, and $\epsilon > 0$,
+after running \acl with
+$\beta_t$ as in \lemmaref{lem:srin1}, with probability at least
+$1-\delta$ the returned solution is $\epsilon$-accurate, that is
+\begin{align*}
+\Pr\left\{\max_{\*x\in D}\ell_h(\*x) \leq \epsilon\right\} \geq 1 - \delta.
+\end{align*}
+\end{lemma}
+\begin{proof}
+The lemma follows directly from \corref{cor:cs} and the classification
+conditions (lines~12 and 15) of \algoref{alg:acl}.
+\end{proof}
+
+\noindent\theoremref{thm:acl} follows by combining \corref{cor:iter}
+and \lemmaref{lem:prob}.
+
+
+\section{Proof of Theorem~\ref*{thm:iacl}} \label{sect:app_iacl}
+
+\begin{definition}
+We label the inequalities that take part in \iacl's classification rules
+as follows
+\begin{align*}
+\min(C_t(\*x)) + \epsilon &\geq h_t^{opt} \tag{Q1}\\
+\max(C_t(\*x)) - \epsilon &\leq h_t^{pes} \tag{Q2}\\
+\max(C_t(\*x)) &< f_t^{pes} \tag{Q3}.
+\end{align*}
+Furthermore, we redefine here for convenience the following quantities
+from the main text
+\begin{align*}
+Z_t &= U_t \cup H^M_t \cup H^L_t\\
+h &= \omega \max_{\*x \in D} f(\*x)\\
+f^{opt}_t &= \max_{Z_{t-1}}\max(C_t(\*x))\\
+h^{opt}_t &= \omega f^{opt}_t\\
+f^{pes}_t &= \max_{Z_{t-1}}\min(C_t(\*x))\\
+h^{pes}_t &= \omega f^{pes}_t.
+\end{align*}
+\end{definition}
+
+\begin{lemma}
+\label{lem:iwb}
+The following holds for any $t \geq 1$
+\begin{align*}
+w_t(\*x_t) \leq \beta_t^{1/2}\sigma_{t-1}(\*x_t).
+\end{align*}
+\end{lemma}
+\begin{proof}
+By the definition of the confidence region width
+\begin{align*}
+w_t(\*x_t) &= \max(C_t(\*x_t)) - \min(C_t(\*x_t))\\
+           &\leq \max(Q_t(\*x_t)) - \min(Q_t(\*x_t))\\
+           &= 2\beta_t^{1/2}\sigma_{t-1}(\*x_t).
+\end{align*}
+\end{proof}
+
+\begin{lemma}
+\label{lem:idec}
+While running \iacl, $w_t(\*x_t)$ is nonincreasing in $t$.
+\end{lemma}
+\begin{proof}
+Completely analogous to the proof of \lemmaref{lem:dec}.
+\end{proof}
+
+\begin{lemma}
+\label{lem:iwbound}
+While running \iacl with $\beta_t$ as in \lemmaref{lem:srin1}, it holds that
+\begin{align*}
+w_t(\*x_t) \leq \sqrt{\frac{C_1 \beta_t \gamma_t}{t}},\ \forall t \geq 1,
+\end{align*}
+where $C_1 = 8 / \log(1 + \sigma^{-2})$.
+\end{lemma}
+\begin{proof}
+Completely analogous to the proof of \lemmaref{lem:wbound}, with
+the only difference being a factor of 2 in the bound
+of \lemmaref{lem:iwb} compared to \lemmaref{lem:wb}.
+\end{proof}
+
+\begin{lemma}
+\label{lem:hdif}
+While running \iacl
+\begin{align*}
+h^{opt}_t - h^{pes}_t \leq \omega w_t(\*x_t),\ \forall t\geq 1.
+\end{align*}
+\end{lemma}
+\begin{proof}
+If we define
+\begin{align}
+\label{eq:hdif_aux}
+\hat{\*x} = \argmax_{\*x\in Z_{t-1}}\max(C_t(\*x)),
+\end{align}
+then by (Q3) it follows that $\hat{\*x} \in Z_t$.
+Consequently, we get
+\begin{align*}
+&\hspace{1.3em}f^{opt}_t - f^{pes}_t\\
+&= \max_{\*x\in Z_{t-1}}\max(C_t(\*x)) - \max_{\*x\in Z_{t-1}}\min(C_t(\*x))\\
+&= \max(C_t(\hat{\*x})) - \max_{\*x\in Z_{t-1}}\min(C_t(\*x)) \tag{by \eqtref{eq:hdif_aux}}\\
+&\leq \max(C_t(\hat{\*x})) - \min(C_t(\hat{\*x}))\\
+&= w_t(\hat{\*x})\\
+&\leq w_t(\*x_t) \tag{by $\hat{\*x} \in Z_t$},
+\end{align*}
+and, therefore, $h^{opt}_t - h^{pes}_t = \omega\left(f^{opt}_t - f^{pes}_t\right) \leq \omega w_t(\*x_t)$.
+\end{proof}
+
+\begin{lemma}
+\label{lem:isterm}
+While running \iacl,
+if for some $t \geq 1$, $w_t(\*x_t) \leq 2\epsilon/(1 + \omega)$,
+then $U_{t+1} = \varnothing$.
+\end{lemma}
+\begin{proof}
+Assume that $U_{t+1} \neq \varnothing$, i.e. there exists a point
+${\*x \in U_t \subseteq Z_t}$, which does not meet (Q1) or (Q2).
+Consequently, that point satisfies
+$\min(C_{t+1}(\*x)) < h^{opt}_{t+1} - \epsilon$ and
+$\max(C_{t+1}(\*x)) > h^{pes}_{t+1} + \epsilon$.
+It follows that
+\begin{align*}
+2\epsilon &< h^{opt}_{t+1} - h^{pes}_{t+1} + \max(C_{t+1}(\*x)) - \min(C_{t+1}(\*x))\\
+&\leq h^{opt}_{t+1} - h^{pes}_{t+1} + w_{t+1}(\*x)\\
+&\leq h^{opt}_{t+1} - h^{pes}_{t+1} + w_t(\*x)\\
+&\leq h^{opt}_{t+1} - h^{pes}_{t+1} + w_t(\*x_t) \tag{by \iacl's selection rule}\\
+&\leq \omega w_{t+1}(\*x_{t+1}) + w_t(\*x_t) \tag{by \lemmaref{lem:hdif}}\\
+&\leq \omega w_t(\*x_t) + w_t(\*x_t) \tag{by \lemmaref{lem:idec}}\\
+&\leq (1 + \omega)w_t(\*x_t),
+\end{align*}
+which contradicts the lemma's assumption.
+\end{proof}
+
+\begin{cor}
+\label{cor:iiter}
+The \iacl algorithm terminates after at most $T$ iterations, where $T$
+is the smallest positive integer satisfying
+\begin{align*}
+\frac{T}{\beta_T \gamma_T} \geq \frac{C_1 (1+\omega)^2}{4\epsilon}.
+\end{align*}
+\end{cor}
+
+\begin{lemma}
+\label{lem:fpes_inc}
+While running \iacl, $f^{pes}_t$ is nondecreasing in $t$.
+\end{lemma}
+\begin{proof}
+Assume that at some iteration $t$
+\begin{align}
+\label{eq:fpes_inc_aux}
+\*x = \argmax_{\*x \in Z_{t-1}} \min(C_t(\*x)).
+\end{align}
+Since $\min(C_t(\*x))$ is nondecreasing in $t$, to have
+$f^{pes}_{t+1} < f^{pes}_t$ would mean that $\*x \notin Z_{t}$.
+That, in turn, implies that $\*x$ was moved to $H_t$ or $L_t$,
+therefore (Q3) was satisfied
+\begin{align*}
+\max_{\*x \in Z_{t-1}} \min(C_t(\*x)) &> \max(C_t(\*x))\\
+&\geq \min(C_t(\*x))\\
+&= \max_{\*x \in Z_{t-1}} \min(C_t(\*x)) \tag{by \eqtref{eq:fpes_inc_aux}},
+\end{align*}
+which is a contradiction and proves our lemma.
+\end{proof}
+
+\begin{lemma}
+\label{lem:mmeq}
+While running \iacl
+\begin{align*}
+f^{opt}_t = \max_{\*x \in D}\max(C_t(\*x)), \forall t \geq 1.
+\end{align*}
+\end{lemma}
+\begin{proof}
+The ``$\leq$" follows from $Z_{t-1} \subseteq D$. Now, assume that
+``$<$" holds, i.e. there exists an $\*x\in D\setminus Z_{t-1}$, such that
+\begin{align}
+\label{eq:hopt_aux2}
+\max_{\*x\in Z_{t-1}} \max(C_t(\*x)) &< \max C_t(\*x).
+\end{align}
+The fact that $\*x\in D\setminus Z_{t-1}$ implies that $\*x$ was moved
+during some iteration $i \leq t$ to $H_i$ or $L_i$, therefore $\*x$
+satisfied (Q3) at that iteration. Putting everything together, we get
+\begin{align*}
+\max_{\*x\in Z_{t-1}} \max(C_t(\*x)) &< \max C_t(\*x) \tag{by \eqtref{eq:hopt_aux2}}\\
+&\leq \max C_i(\*x)\\
+&\leq \max_{\*x\in Z_{i-1}}\min(C_i(\*x)) \tag{by (Q3)}\\
+&\leq \max_{\*x\in Z_{t-1}}\min(C_t(\*x)) \tag{by \lemmaref{lem:fpes_inc}}\\
+&\leq \max_{\*x\in Z_{t-1}} \max(C_t(\*x)),
+\end{align*}
+which is a contradiction and proves the lemma.
+\end{proof}
+
+\begin{lemma}
+\label{lem:hopt}
+While running \iacl, the following holds with probability at least $1-\delta$
+\begin{align*}
+h^{opt}_t \geq h,\ \forall t \geq 1.
+\end{align*}
+\end{lemma}
+\begin{proof}
+The following (in)equalities hold with probability at least $1-\delta$
+\begin{align*}
+h^{opt}_t &= \omega\max_{\*x \in Z_{t-1}}\max(C_t(\*x))\\
+&= \omega\max_{\*x \in D}\max(C_t(\*x)) \tag{by \lemmaref{lem:mmeq}}\\
+&\geq \omega \max_{\*x \in D} f(\*x) \tag{by \corref{cor:cs}}\\
+&= h.
+\end{align*}
+\end{proof}
+
+\begin{lemma}
+\label{lem:hpes}
+While running \iacl, the following holds with probability at least $1-\delta$
+\begin{align*}
+h^{pes}_t \leq h,\ \forall t \geq 1.
+\end{align*}
+\end{lemma}
+\begin{proof}
+The following (in)equalities hold with probability at least $1-\delta$
+\begin{align*}
+h^{pes}_t &= \omega\max_{\*x \in Z_{t-1}}\min(C_t(\*x))\\
+&\leq \omega \max_{\*x \in Z_{t-1}} f(\*x) \tag{by \corref{cor:cs}}\\
+&\leq \omega \max_{\*x \in D} f(\*x) \tag{by $Z_{t-1}\subseteq D$}\\
+&= h.
+\end{align*}
+\end{proof}
+
+\begin{lemma}
+\label{lem:iprob}
+For any $\omega \in (0, 1)$, $\delta \in (0, 1)$, and $\epsilon > 0$,
+after running \iacl with
+$\beta_t$ as in \lemmaref{lem:srin1}, with probability at least
+$1-\delta$ the returned solution is $\epsilon$-accurate, that is
+\begin{align*}
+\Pr\left\{\max_{\*x\in D}\ell_{h}(\*x) \leq \epsilon\right\} \geq 1 - \delta.
+\end{align*}
+\end{lemma}
+\begin{proof}
+From \lemmaref{lem:hopt} and \lemmaref{lem:hpes} it follows that, with probability
+at least $1-\delta$, (Q1) and (Q2)
+are stricter conditions than the following
+\begin{align*}
+\min(C_t(\*x)) + \epsilon &\geq h\\
+\max(C_t(\*x)) - \epsilon &\leq h,
+\end{align*}
+which are identical to the ones used by \acl. Therefore, the solution of \iacl
+achieves at least as high accuracy as the one provided for \acl by
+\lemmaref{lem:prob}.
+\end{proof}
+
+\noindent\theoremref{thm:iacl} follows by combining \corref{cor:iiter}
+and \lemmaref{lem:iprob}.
+
+\section{Proof of Theorem~\ref*{thm:bacl}} \label{sect:app_bacl}
+\begin{lemma}
+\label{lem:cmi}
+For any $\*x \in D$ and $t \geq 1$
+the ratio of $\sigma_{fb[t]}(\*x)$ to $\sigma_{t-1}(\*x)$ is bounded
+as follows
+\begin{align*}
+\frac{\sigma_{fb[t]}(\*x)}{\sigma_{t-1}(\*x)} \leq \exp\left\{I(f; \*y_{fb[t]+1:t-1} \mid \*y_{1:fb[t]}\right\}.
+\end{align*}
+\end{lemma}
+\begin{proof}
+See Lemma 1 in \cite{desautels12}.
+\end{proof}
+
+\begin{lemma}
+\label{lem:batch}
+Assume that for all $t \geq 1$ the maximum conditional mutual information
+acquired by any set of measurements since the last feedback is bounded
+by a constant $C \geq 0$, i.e.
+\begin{align}
+\label{eq:cmi}
+\max_{A\subseteq D, |A|\leq B-1} I(f; \*y_A \mid \*y_{1:fb[t]}) \leq C.
+\end{align}
+Then, if $\eta_t = e^{2C}\beta_{fb[t]+1}$, the following holds with probability
+at least $1 - \delta$
+\begin{align*}
+f(\*x) \in Q_t^{b}(\*x),\ \forall \*x \in D\ \forall t \geq 1.
+\end{align*}
+\end{lemma}
+\begin{proof}
+From \lemmaref{lem:cmi} and \eqtref{eq:cmi}, it follows that for any
+$\*x \in D$ and $t \geq 1$
+\begin{align*}
+&\frac{\sigma_{fb[t]}(\*x)}{\sigma_{t-1}(\*x)} \leq \exp\left\{I(f; \*y_{fb[t]+1:t-1} \mid \*y_{1:fb[t]}\right\} \leq e^C\\
+\Rightarrow\ & e^C \sigma_{t-1}(\*x) \geq \sigma_{fb[t]}(\*x).
+\end{align*}
+Using this, the range of $Q_t^{b}(\*x)$ can be related to the range
+of $Q_{fb[t]+1}(\*x)$ as follows
+\begin{align*}
+2\eta_t^{1/2}\sigma_{t-1}(\*x) = 2 e^C \beta_{fb[t]+1}^{1/2}\sigma_{t-1}(\*x) \geq 2\beta_{fb[t]+1}^{1/2}\sigma_{fb[t]}(\*x).
+\end{align*}
+Furthermore, $Q_t^{b}(\*x)$ and $Q_{fb[t]+1}(\*x)$ have the same midpoint,
+namely $\mu_{fb[t]}(\*x)$, therefore the above range inequality implies that
+\begin{align}
+\label{eq:qbss}
+Q_t^{b}(\*x) \supseteq Q_{fb[t]+1}(\*x),\ \forall \*x \in D\ \forall t \geq 1.
+\end{align}
+Finally, from \lemmaref{lem:srin1} we have that
+\begin{align*}
+&\Pr\{f(\*x) \in Q_{fb[t]+1}(\*x)\} \geq 1 - \delta,\ \forall \*x \in D\ \forall t \geq 1\\
+\stackrel{\eqtref{eq:qbss}}{\Rightarrow}\ & \Pr\{f(\*x) \in Q_t^{b}(\*x)\} \geq 1 - \delta,\ \forall \*x \in D\ \forall t \geq 1.
+\end{align*}
+\end{proof}
+
+\begin{cor}
+\label{cor:batch}
+Given the assumptions of \lemmaref{lem:batch}, the following holds with
+probability at least $1-\delta$
+\begin{align*}
+f(\*x) \in C_t^{b}(\*x),\ \forall \*x \in D\ \forall t \geq 1.
+\end{align*}
+\end{cor}
+
+\noindent Note that \corref{cor:batch} is completely analogous to \corref{cor:cs}.
+Thus, the results of Lemmas~\lemmaref{lem:wb}--\ref{lem:prob} also hold for
+the case of \bacl, provided that $\eta_t$, as defined in \lemmaref{lem:batch},
+is used in place of $\beta_t$, which proves \theoremref{thm:bacl}.

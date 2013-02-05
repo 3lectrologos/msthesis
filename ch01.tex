@@ -1,0 +1,150 @@
+\chapter{Introduction}
+Many information gathering problems 
+%It is often the case in practical applications, that we are primarily
+%interested in 
+require accurately determining the regions where the value of some
+unknown function lies above or below a given threshold level.
+%, whereas
+% modeling the precise behavior of the function inside those regions is of
+%secondary concern. 
+Moreover, evaluating the function is usually a costly
+procedure and the measurements returned are noisy.
+
+As a concrete example of such an application, consider the task of
+monitoring a lake environment for algal bloom, a phenomenon that is
+potentially harmful to other organisms of the ecosystem. One way to
+accomplish this, is by
+determining the regions of the lake where the levels of algae-produced
+chlorophyll are above some threshold value determined by field experts.
+These regions can be estimated by sampling
+at various locations of the lake using a mobile sensing device.
+However, each measurement is costly in terms of time and sensor battery power,
+therefore the sampling locations have to be picked carefully, in order to
+reduce the total number of measurements required.
+
+Other example applications in the context of environmental
+monitoring~\cite{rahimi04} include estimating level sets of quantities
+such as solar radiation, humidity, etc., and determining
+the extent of hazardous phenomena, e.g. air pollution or
+oil spills~\cite{galland04}.
+In a different category are applications that consist in determining
+the subset of a
+parameter space that represents ``acceptable'' hypotheses~\cite{bryan05} or
+designs~\cite{ramakrishnan05}.
+
+We consider the problem of estimating some function level set
+in a sequential decision setting, where, at each time step, the
+next sampling location is to be selected given all previous measurements.
+For solving this problem, we propose the \fullacl (\acl) algorithm,
+which utilizes Gaussian processes~\cite{rasmussen06} to model the target
+function and exploits its inferred confidence bounds to drive the selection
+process.
+We also provide an information-theoretic bound
+on the number of measurements needed to achieve a certain accuracy,
+when the underlying function is sampled from a Gaussian process.
+
+Furthermore, we extend the \acl algorithm to two more settings that
+naturally arise in practical applications.
+In the first setting, we do not a priori have a specific threshold level
+at our disposal, but would still like to perform level set estimation with
+respect to an \emph{implicit} level that is expressed as a percentage
+of the function maximum.
+In the second setting, we want to select at each step a \emph{batch} of next
+samples. A reason for doing so is that,
+in problems such as the lake sensing example outlined above,
+apart from the cost of actually taking each measurement, we
+also have to take into account the cost incurred by traveling from one
+sampling location to the next. Traveling costs can be dramatically reduced,
+if we plan ahead by selecting multiple points at a time. Another reason is
+that some problems allow for running multiple function evaluations in
+parallel, in which case selecting batches of points can lead to a
+significant increase in sampling throughput.
+
+\paragraph{Contributions}
+The main contributions of this paper can be summarized as follows:
+\begin{itemize}
+\item We introduce the \acl algorithm for sequentially estimating level sets
+      of unknown functions and also extend it to select samples in batches.
+\item We consider for the first time the problem of estimating level sets under
+      implicitly defined threshold levels and propose an extension of \acl
+      for this problem.
+\item We prove theoretical convergence bounds for \acl and its two
+      extensions when the target function is sampled from a known GP.
+\item We evaluate \acl and its extensions on two real-world datasets and show
+      that they are competitive with the state-of-the-art.
+\end{itemize}
+
+\section{Related work}
+Previous work on level set~\cite{dantu07,srinivasan08} and
+boundary~\cite{singh06} estimation and tracking in the context of mobile
+sensor networks has primarily focused on controlling the movement and
+communication of sensor nodes, without giving much attention to
+individual sampling locations and the choice thereof.
+
+In contrast, we consider the problem of level set estimation in the setting of
+\emph{pool-based active learning}~\cite{settles09}, where we need to make
+sequential decisions by choosing sampling locations from a given set.
+For this problem, \citet{bryan05} have proposed the
+\emph{straddle} heuristic, which selects where to sample by trading off
+uncertainty and proximity to the desired threshold level, both estimated
+using GPs.
+However, no theoretical justification has been given for the use of straddle,
+neither for its extension to composite functions~\cite{bryan08}.
+\citet{garnett12} consider the problem of
+\emph{active search}, which is also about sequential sampling from a domain of
+two (or more) classes (in our case the super- and sublevel sets).
+In contrast to our goal of detecting the class boundaries, however,
+their goal is to sample as many points as possible from one of the classes.
+
+In the setting of multi-armed bandit optimization, which is similar to ours
+in terms of sequential sampling, but different in terms of objectives,
+GPs have been used both for modeling, as well as for sample
+selection~\mbox{\cite{brochu10}}. In particular, the \gpucb algorithm
+makes use of GP-inferred upper confidence bounds for selecting samples and
+has been shown to achieve sublinear regret~\cite{srinivas10}.
+An extension of \gpucb to the multi-objective
+optimization problem has been proposed by
+\citet{zuluaga13}, who use a similar GP-based
+classification scheme to ours to classify points as being Pareto-optimal
+or not.
+
+Existing approaches for performing multiple evaluations in
+parallel in the context of GP optimization, include
+\emph{simulation matching}~\cite{azimi10}, which combines GP modeling with
+Monte-Carlo simulations, and the \gpbucb~\cite{desautels12} algorithm,
+which obtains similar regret bounds to \gpucb, and from which we borrow
+the main idea for performing batch sample selection.
+
+To our knowledge, there has been no previous work on actively estimating
+level sets with respect to implicitly defined threshold levels.
+
+\section{Gaussian processes}
+\looseness -1 Without any assumptions about the function $f$, attempting to estimate level sets from few samples is a hopeless endeavor.
+%theoretically analyze our algorithms, we have to make some assumptions about the underlying function $f$.
+Modeling $f$ as a sample from a Gaussian process
+(GP) provides an elegant way for specifying properties of the function in a
+nonparametric fashion. A GP is defined as a collection of random variables,
+any finite subset of which is distributed according to a
+multivariate Gaussian in a consistent way~\cite{rasmussen06}. A GP is
+denoted as $\mathcal{GP}(\mu(\*x), k(\*x, \*x'))$ and is
+completely specified by its mean function $\mu(\*x)$, which can be
+assumed to be zero w.l.o.g., and its covariance function or kernel
+$k(\*x, \*x')$, which encodes smoothness properties of functions sampled
+from the GP.
+
+Assuming a GP prior $\mathcal{GP}(0, k(\*x, \*x'))$ over $f$ and given
+$t$ noisy measurements $\*y_t = [y_1,\ldots,y_t]^T$ for
+points in $A_t = \{x_1,\ldots,x_t\}$,
+where $y_i = f(\*x_i) + n_i$ and
+${n_i \sim \mathcal{N}(0, \sigma^2)}$ (Gaussian i.i.d. noise)
+for $i = 1,\ldots,t$, the posterior over $f$ is also a
+GP and its mean, covariance, and variance functions are given by the
+following analytic formulae:
+\begin{align}
+\mu_t(\*x) &= \*k_t(\*x)^T\left(\*K_t + \sigma^2 \*I\right)^{-1}\*y_t\label{eq:mean}\\
+k_t(\*x, \*x') &= k(\*x, \*x') - \*k_t(\*x)^T\left(\*K_t + \sigma^2 \*I\right)^{-1}\*k_t(\*x)\notag\\
+\sigma_t^2(\*x) &= k_t(\*x, \*x)\label{eq:var},
+\end{align}
+where $\*k_t(\*x) = [k(\*x_1, \*x),\ldots,k(\*x_t, \*x)]^T$ and $\*K_t$ is
+the kernel matrix of already observed points, defined as
+${\*K_t = [k(\*x, \*x')]_{\*x, \*x'\in\*A_t}}$.

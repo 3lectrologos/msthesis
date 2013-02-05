@@ -1,0 +1,79 @@
+\documentclass[a4paper,11pt,twoside]{book}
+
+\usepackage{fontspec}
+\usepackage{leading}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath,amssymb}
+\usepackage{bm}                % Bold math symbols
+\usepackage{amsthm}            % For theorems, lemmas, etc.
+\usepackage{xspace}            % Controls space after user-defined command
+\usepackage{fixltx2e}          % For subscripts in normal text
+\usepackage[nottoc]{tocbibind} % Include bibliography in TOC
+\usepackage{hyperref}
+\usepackage{makeidx}
+\usepackage{msthesis}
+
+% Fonts
+\setmainfont[Mapping=tex-text]{Linux Libertine}
+\setsansfont{Myriad Pro}
+\setmonofont[Scale=0.9]{Consolas}
+%\leading{9pt}
+
+% Algorithm related
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\newcommand*\LNot{\textbf{not}\xspace}
+\newcommand*\LAnd{\textbf{and}\xspace}
+\newcommand*\LET[2]{\STATE #1 $\gets$ #2}
+\newcommand*\Fcall[1]{\textsc{#1}}
+\makeatletter
+\newcommand{\setalglineno}[1]{%
+  \setcounter{ALC@line}{\numexpr#1-1}}
+\makeatother
+
+% Abbreviations
+\newcommand{\gpucb}{\textsf{GP-UCB}\xspace}
+\newcommand{\gpbucb}{\textsf{GP-BUCB}\xspace}
+\newcommand{\acl}{\textsf{LSE}\xspace}
+\newcommand{\fullacl}{Level Set Estimation\xspace}
+\newcommand{\iacl}{\textsf{LSE\textsubscript{imp}}\xspace}
+\newcommand{\bacl}{\textsf{LSE\textsubscript{batch}}\xspace}
+\newcommand{\ibacl}{\textsf{LSE\textsubscript{imp-batch}}\xspace}
+\newcommand{\str}{\textsf{STR}\xspace}
+\newcommand{\istr}{\textsf{STR\textsubscript{imp}}\xspace}
+\newcommand{\bstr}{\textsf{STR\textsubscript{batch}}\xspace}
+\newcommand{\rstr}{\textsf{STR\textsubscript{rank}}\xspace}
+\newcommand{\var}{\textsf{VAR}\xspace}
+
+% Hyphenations
+\hyphenation{Sri-ni-vas}
+\hyphenation{Ra-hi-mi}
+\hyphenation{Co-ver}
+
+
+\begin{document}
+
+\frontmatter
+\pagestyle{frontmatter}
+\input{front.tex}
+\tableofcontents
+
+\mainmatter
+\pagestyle{mainmatter}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+%\renewcommand{\chaptermark}[1]{\markright{\thechapter #1}}
+\input{ch01.tex}
+\input{ch02.tex}
+\input{appendix.tex}
+
+\backmatter
+\pagestyle{frontmatter}
+\bibliography{msthesis}
+\bibliographystyle{icml2013}
+
+\end{document}
