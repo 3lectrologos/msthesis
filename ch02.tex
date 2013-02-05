@@ -6,26 +6,6 @@ bandit optimization algorithm in that it uses a GP to model the
 underlying function and facilitates the inferred mean and variance of the GP
 to guide the selection of points to be evaluated.
 
-\begin{figure}[t]
-  \begin{subfigure}[b]{0.49\linewidth}
-    \centering
-    \includegraphics[height=1.4in]{figures/class}
-    \caption{}
-    \label{fig:conf}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.49\linewidth}
-    \centering
-    \includegraphics[height=1.4in]{figures/amb}
-    \caption{}
-    \label{fig:amb}
-  \end{subfigure}
-  \caption{
-  (a) Example of the three possible configurations of confidence regions.
-  (b) Ambiguities (shaded) of two example points.
-  }
-\end{figure}
-
 More concretely, the inferred mean and variance of \eqtref{eq:mean}
 and \eqtref{eq:var} can be used to construct a \emph{confidence interval}
 \begin{align*}
@@ -102,6 +82,70 @@ $\hat{L}$ are returned (\linesref{lin:ret1}{lin:ret2}).
 }
 \end{algorithm}
 
+\setlength\figureheight{1.5in}\setlength\figurewidth{2.5in}
+%\input{figures/limno_chl_fp.tex}
+%\input{figures/limno_chl_class25.tex}
+%\input{figures/limno_chl_class50.tex}
+%\input{figures/limno_chl_class75.tex}
+%\input{figures/limno_chl_class100.tex}
+%\input{figures/limno_chl_class168.tex}
+
+\begin{figure}[tb]
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \includegraphics[height=1.5in]{figures/class}
+    \caption{Confidence regions}
+    \label{fig:conf}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \includegraphics[height=1.5in]{figures/amb}
+    \caption{Ambiguities}
+    \label{fig:amb}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \vspace{0.6em} % space of this row from above captions
+    \includegraphics[width=2.4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_fp}
+    \caption{Ground truth}
+    \label{fig:limno_chl}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \includegraphics[width=2.4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_class25}
+    \caption{$t = 25$}
+    \label{fig:limno_chl_class1}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \vspace{0.6em} % space of this row from above captions
+    \includegraphics[width=2.4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_class75}
+    \caption{$t = 75$}
+    \label{fig:limno_chl_class2}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \includegraphics[width=2.4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_class168}
+    \caption{$t = 168$ (termination)}
+    \label{fig:limno_chl_class3}
+  \end{subfigure}
+  \caption{
+  (a) Example of the three possible configurations of confidence regions.
+  (b) Ambiguities (shaded) of two example points.
+  (c) Chlorophyll concentration in relative fluorescence units (RFU) inferred
+      from 2024 measurements within a vertical transect plane of lake Zurich
+      (the level set at $h = 1.3$ RFU is shown dashed).
+  (d), (e), (f) \acl after $t = 50, 75$, and $168$ iterations respectively,
+      on a grid of $100\times 100$ points:
+      regions of already classified points in orange ($H_t$) and blue ($L_t$),
+      of yet unclassified points ($U_t$) in black, and observed points
+      ($\{\*x_i\}_{1\leq i\leq t}$) as white marks.
+  }
+\end{figure}
+
 We now discuss in more detail the issues of how points are classified and
 how the next point is selected at each step.
 
@@ -136,19 +180,24 @@ The intuition of sampling at areas of the sample space with large
 classification uncertainty, expecting to gain more information about
 the problem at hand when sampling at those areas, manifests itself in \acl
 by choosing to evaluate at each iteration the point with the largest
-ambiguity amongst the yet unclassified
-(see~\figsref{fig:limno_chl} and~\ref{fig:limno_chl_class}).
+ambiguity amongst the yet unclassified.
 
 We can make an interesting observation at this point. If we use the confidence
 intervals $Q_t(\*x)$ instead of the confidence regions $C_t(\*x)$
 in the definition of ambiguity, we get
 \begin{align*}
 a'_t(\*x) &= \min\{\max(Q_t(\*x)) - h, h - \min(Q_t(\*x))\}\\
-         &= \beta_t\sigma_{t-1}(\*x) - |\mu_{t-1}(\*x) - h|.
+          &= \min\{\mu_{t-1}(\*x) + \beta_t^{1/2}\sigma_{t-1}(\*x) - h,\ h - \mu_{t-1}(\*x) + \beta_t^{1/2}\sigma_{t-1}(\*x)\}\\
+          &= \beta_t^{1/2}\sigma_{t-1}(\*x) - |\mu_{t-1}(\*x) - h|.
 \end{align*}
-For $\beta_t = 1.96$, this is identical to
+For $\beta_t^{1/2} = 1.96$, this is identical to
 the \emph{straddle}~\cite{bryan05} selection rule, which can thus be
 intuitively explained in terms of classification ambiguity.
+
+\figsref{fig:limno_chl} to \ref{fig:limno_chl_class3} present an example
+of running the \acl algorithm on a chlorophyll dataset from lake Zurich.
+Note how the sampling process focuses on the ambiguous regions around the
+desired level set until all points in $D$ have been successfully classified. 
 
 \paragraph{Theoretical analysis}
 The convergence analysis of \acl rests on quantifying the complexity of the GP prior for $f$ in information-theoretic terms.

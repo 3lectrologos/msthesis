@@ -1,4 +1,10 @@
 *~
+*.bak
+*.aux
+*.log
+*.synctex
+*.toc
+*.ind
 /*
 !/.gitignore
 !/*.tex
