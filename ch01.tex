@@ -28,7 +28,7 @@ reduce the total number of measurements required.
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=3.8in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_fp}
+  \includegraphics[width=4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_fp}
   \caption{Chlorophyll concentration in relative fluorescence units (RFU)
            inferred from $2024$ measurements within a vertical transect plane
            of Lake Zurich (target level set at $h = 1.3$ RFU shown dashed).}
@@ -130,6 +130,31 @@ the main idea for performing batch sample selection.
 
 To our knowledge, there has been no previous work on actively estimating
 level sets with respect to implicitly defined threshold levels.
+
+\section{Formal problem statement} \label{sect:prelim}
+
+Given a function ${f : D \to \mathbb{R}}$, where $D$ is a
+finite\footnote{The subsequent analysis only considers the finite domain case
+for simplicity, however our results can be generalized to continuous spaces
+as well \citep[cf.][]{srinivas10}.}
+subset of $\mathbb{R}^d$, and a threshold level ${h \in \mathbb{R}}$,
+we define the \emph{level set estimation problem} as the problem of classifying
+every point $\*x \in D$ into a \emph{superlevel set}
+${H = \{\*x \in D \mid f(\*x) > h\}}$ and a \emph{sublevel set}
+${L = \{\*x \in D \mid f(\*x) \leq h\}}$.
+
+In the \emph{strictly sequential} setting,
+at each step $t \geq 1$, we select a point $\*x_t \in D$ to be evaluated and
+obtain a noisy measurement $y_t = f(\*x_t) + n_t$.
+In the \emph{batch} setting we select $B$ points at a time and only obtain
+the resulting measurements after all of the $B$ points have been selected.
+
+When an explicit level is not available, we can define an
+\emph{implicit threshold level}
+with respect to the function maximum in either absolute or relative terms.
+We use the relative definition in our exposition with
+${h = \omega \max_{\*x\in D} f(\*x)}$
+and $\omega \in (0, 1)$.
 
 \section{Gaussian processes}
 \looseness -1 Without any assumptions about the function $f$, attempting to estimate level sets from few samples is a hopeless endeavor.

@@ -26,9 +26,9 @@ The pseudocode of \algoref{alg:acl} depicts in detail the operation of \acl.
 Our algorithm maintains a set of yet unclassified
 points $U_t$, as well as a superlevel set $H_t$ and a sublevel set
 $L_t$, which are updated at each iteration. Furthermore, the algorithm
-maintains for each $\*x$ a monotonically decreasing \emph{confidence
-region} $C_t(\*x)$, which results from intersecting successive
-confidence intervals, i.e.
+maintains for each unclassified $\*x$ a monotonically decreasing
+\emph{confidence region} $C_t(\*x)$, which results from intersecting
+successive confidence intervals, i.e.
 \begin{align*}
 C_t(\*x) = \bigcap_{i=1}^t Q_i(\*x) = C_{t-1}(\*x) \cap Q_t(\*x).
 \end{align*}
@@ -39,10 +39,12 @@ regions of all
 unclassified points are updated (\lineref{lin:upd}) and each of these points
 is either classified into one of $H_t$ or $L_t$, or is left unclassified
 (\linesref{lin:class1}{lin:class2}). Then, the next point is selected and
-evaluated (\linesref{lin:sel1}{lin:sel2}) and the new GP posterior is computed
-(\lineref{lin:inf}). The algorithm terminates when all points in $D$ have been
-classified, in which case the estimated super- and sublevel sets $\hat{H}$ and
-$\hat{L}$ are returned (\linesref{lin:ret1}{lin:ret2}).
+evaluated (\linesref{lin:sel1}{lin:sel2}) and the new GP posterior is
+computed (\lineref{lin:inf}) taking into account the newest measurement,
+according to equations \eqtref{eq:mean} and \eqtref{eq:var}.
+The algorithm terminates when all points in $D$ have been
+classified, at which point the estimated super- and sublevel sets
+$\hat{H}$ and $\hat{L}$ are returned (\linesref{lin:ret1}{lin:ret2}).
 
 \begin{algorithm}[tb]
   \caption{The \acl algorithm}
@@ -82,68 +84,10 @@ $\hat{L}$ are returned (\linesref{lin:ret1}{lin:ret2}).
 }
 \end{algorithm}
 
-%\setlength\figureheight{1.5in}\setlength\figurewidth{2.5in}
-%\input{figures/limno_chl_class25.tex}
-%\input{figures/limno_chl_class50.tex}
-%\input{figures/limno_chl_class75.tex}
-%\input{figures/limno_chl_class100.tex}
-%\input{figures/limno_chl_class168.tex}
-
-\begin{figure}[tb]
-  \begin{subfigure}[b]{0.49\linewidth}
-    \centering
-    \includegraphics[height=1.5in]{figures/class}
-    \caption{Confidence regions}
-    \label{fig:conf}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.49\linewidth}
-    \centering
-    \includegraphics[height=1.5in]{figures/amb}
-    \caption{Ambiguities}
-    \label{fig:amb}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.49\linewidth}
-    \centering
-    \vspace{0.6em} % space of this row from above captions
-    \includegraphics[width=2.4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_class25}
-    \caption{Ground truth}
-    \label{fig:limno_chl_class1}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.49\linewidth}
-    \centering
-    \includegraphics[width=2.4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_class50}
-    \caption{$t = 25$}
-    \label{fig:limno_chl_class2}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.49\linewidth}
-    \centering
-    \vspace{0.6em} % space of this row from above captions
-    \includegraphics[width=2.4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_class100}
-    \caption{$t = 75$}
-    \label{fig:limno_chl_class3}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.49\linewidth}
-    \centering
-    \includegraphics[width=2.4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_class168}
-    \caption{$t = 168$ (termination)}
-    \label{fig:limno_chl_class4}
-  \end{subfigure}
-  \caption{
-  (a) Example of the three possible configurations of confidence regions.
-  (b) Ambiguities (shaded) of two example points.
-  (c)--(f) \acl after $t = 50, 75, 100$, and $168$ iterations respectively,
-      run on a regular grid of $100\times 100$ points:
-      regions of already classified points in orange ($H_t$) and blue ($L_t$),
-      of yet unclassified points ($U_t$) in black, and observed points
-      ($\{\*x_i\}_{1\leq i\leq t}$) as white marks.
-  }
-\end{figure}
-
 We now discuss in more detail the issues of how points are classified and
-how the next point is selected at each step.
+how the next point to be evaluated is selected at each step.
+
+\section{Algorithm details}
 
 \paragraph{Classification}
 The classification of a point $\*x$ into $H_t$ or $L_t$ depends on the
@@ -163,15 +107,35 @@ remain in $U_t$ as unclassified. Note that \acl uses a monotonic
 classification scheme, meaning that once a point has been classified, it
 stays so until the algorithm terminates.
 
+\begin{figure}[tb]
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \includegraphics[height=1.5in]{figures/class}
+    \caption{Confidence regions}
+    \label{fig:conf}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \includegraphics[height=1.5in]{figures/amb}
+    \caption{Ambiguities}
+    \label{fig:amb}
+  \end{subfigure}
+  \caption{
+    (a) Example of the three possible configurations of confidence regions.
+    (b) Ambiguities (shaded) of two example points.
+  }
+\end{figure}
+
 \paragraph{Sample selection}
 For selecting the next point to be evaluated at each iteration, we define the
 following quantity
 \begin{align*}
 a_t(\*x) = \min\{\max(C_t(\*x)) - h, h - \min(C_t(\*x))\},
 \end{align*}
-which we call \emph{ambiguity}. As its name suggests, the ambiguity of a
-point $\*x$ quantifies our uncertainty about whether $\*x$ belongs to
-$H_t$ or $L_t$ (see \figref{fig:amb}).
+which we call classification \emph{ambiguity}. As its name suggests, the
+ambiguity of a point $\*x$ quantifies our uncertainty about whether $\*x$
+belongs to $H_t$ or $L_t$ (see \figref{fig:amb}).
 The intuition of sampling at areas of the sample space with large
 classification uncertainty, expecting to gain more information about
 the problem at hand when sampling at those areas, manifests itself in \acl
@@ -180,23 +144,68 @@ ambiguity amongst the yet unclassified.
 
 We can make an interesting observation at this point. If we use the confidence
 intervals $Q_t(\*x)$ instead of the confidence regions $C_t(\*x)$
-in the definition of ambiguity, we get
+in the definition of ambiguity, we get the following quantity
 \begin{align*}
 a'_t(\*x) &= \min\{\max(Q_t(\*x)) - h, h - \min(Q_t(\*x))\}\\
           &= \min\{\mu_{t-1}(\*x) + \beta_t^{1/2}\sigma_{t-1}(\*x) - h,\ h - \mu_{t-1}(\*x) + \beta_t^{1/2}\sigma_{t-1}(\*x)\}\\
           &= \beta_t^{1/2}\sigma_{t-1}(\*x) - |\mu_{t-1}(\*x) - h|.
 \end{align*}
 For $\beta_t^{1/2} = 1.96$, this is identical to
-the \emph{straddle}~\cite{bryan05} selection rule, which can thus be
+the \emph{straddle}~\cite{bryan05} heuristic, which can thus be
 intuitively explained in terms of classification ambiguity.
 
-\figsref{fig:limno_chl_class1} to \ref{fig:limno_chl_class4} present an example
-of running the \acl algorithm on the chlorophyll dataset of
-\figref{fig:limno_chl}. Note how the sampling process focuses on the ambiguous
-regions around the desired level set until all points in $D$ have been
-successfully classified. 
+%\setlength\figureheight{1.5in}\setlength\figurewidth{2.5in}
+%\input{figures/limno_chl_class25.tex}
+%\input{figures/limno_chl_class50.tex}
+%\input{figures/limno_chl_class75.tex}
+%\input{figures/limno_chl_class100.tex}
+%\input{figures/limno_chl_class168.tex}
+\begin{figure}[tb]
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \vspace{0.6em} % space of this row from above captions
+    \includegraphics[width=2.4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_class25}
+    \caption{$t = 25$}
+    \label{fig:limno_chl_class1}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \includegraphics[width=2.4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_class50}
+    \caption{$t = 50$}
+    \label{fig:limno_chl_class2}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \vspace{0.6em} % space of this row from above captions
+    \includegraphics[width=2.4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_class100}
+    \caption{$t = 100$}
+    \label{fig:limno_chl_class3}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \includegraphics[width=2.4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_class168}
+    \caption{$t = 168$ (termination)}
+    \label{fig:limno_chl_class4}
+  \end{subfigure}
+  \caption{
+      Running \acl with $\epsilon = 0.1$ on a regular grid of $100\times 100$ points
+      sampled from the inferred chlorophyll GP of \figref{fig:limno_chl}.
+      Regions of already classified points are shown in orange ($H_t$) and blue ($L_t$),
+      regions of yet unclassified points ($U_t$) in black, and observed points
+      ($\{\*x_i\}_{1\leq i\leq t}$) as white marks.
+  }
+\end{figure}
 
-\paragraph{Theoretical analysis}
+\figsref{fig:limno_chl_class1} to \ref{fig:limno_chl_class4} present an example
+of running the \acl algorithm on a fine grid of points sampled from the
+inferred GP of the chlorophyll dataset shown in \figref{fig:limno_chl}.
+Note how the sampling process
+focuses on the ambiguous regions around the desired level set until all points
+in $D$ have been successfully classified.
+
+\section{Theoretical analysis}
 The convergence analysis of \acl rests on quantifying the complexity of the GP prior for $f$ in information-theoretic terms.
 The information gain~\cite{cover06} about $f$ from observing $t$ noisy
 measurements $\*y_t = (y_i)_{1\leq i\leq t}$ is
@@ -238,7 +247,7 @@ satisfying
 \frac{T}{\beta_T \gamma_T} \geq \frac{C_1}{4\epsilon^2},
 %T/(\beta_T \gamma_T) \geq C_1/(4\epsilon^2),
 \end{align*}
-where $C_1 = 8/log(1 + \sigma^{-2})$.
+where $C_1 = 8 / \log(1 + \sigma^{-2})$.
 
 Furthermore, with probability at least $1-\delta$, the algorithm returns
 an $\epsilon$-accurate solution, that is
@@ -247,20 +256,38 @@ an $\epsilon$-accurate solution, that is
 \end{align*}
 \end{theorem}
 
-The proof of \theoremref{thm:acl} can be
-outlined as follows.\footnote{Detailed proofs of all theorems and further
-experiments can be found in the supplemental material of this paper
-(\url{http://sites.google.com/site/lseijcai13/long.pdf}).}
-The choice of $\beta_t$ guarantees
-the inclusion of $f(\*x)$ in the confidence regions $C_t(\*x)$ for
-all $\*x\in D$. From the monotonic classification scheme and
-the maximum ambiguity selection rule, it follows that the
-ambiguities of the selected points, $a_t(\*x_t)$, are decreasing
-with $t$ and, using $\gamma_t$, they can be shown to decrease
-as $\mathcal{O}((\frac{\beta_t \gamma_t}{t})^\frac{1}{2})$. Finally,
-the classification rules of \acl connect the number of iterations to
-the accuracy parameter $\epsilon$ and guarantee an $\epsilon$-accurate
-solution with high probability.
+The detailed proof of \theoremref{thm:acl} can be found in
+\sectref{sect:app_acl}. We outline here the main steps required.
+
+\begin{description}
+\item[Decreasing ambiguities.] We show that the ambiguities of the selected
+      points, $a_t(\*x_t)$, are decreasing in $t$ due to the maximum
+      ambiguity selection rule and the monotonic classification
+      scheme. Furthermore, by employing the maximum information
+      gain $\gamma_t$, we show that $a_t(\*x_t)$ decreases
+      as $\mathcal{O}((\frac{\beta_t \gamma_t}{t})^\frac{1}{2})$.
+\item[Termination.] We show that the classification rules guarantee that the
+      algorithm terminates when $a_t(\*x_t)$ is sufficiently small.
+      The fact that this will eventually happen is implied from
+      the previous step.
+\item[``Valid'' confidence regions.] We guarantee that $f(\*x)$ is included
+      with high probability in the inferred
+      interval $Q_t(\*x)$ and that this holds 1) for every $\*x$ and
+      2) for every $t \geq 1$, which also implies that $f(\*x)$ is
+      included in each confidence region $C_t(\*x)$. By suitably
+      choosing the scaling parameter $\beta_t$, 1) follows from the
+      fact that, for every $\*x \in D$ and every $t \geq 1$,
+      $f(\*x)$ is distributed
+      according to $N(\mu_{t-1}(\*x), \sigma_{t-1}(\*x))$, since
+      we are assuming that it is sampled from a known GP that is
+      also used by \acl,
+      and 2) follows from a union bound over $t$.
+\item[Solution accuracy.] We show that an $\epsilon$-accurate solution
+      is obtained
+      upon termination, due to the classification rules and the
+      ``validity'' of the confidence regions guaranteed in the
+      previous step.
+\end{description}
 
 Note that bounds on $\gamma_t$ have been established for commonly used
 kernels~\cite{srinivas10} and can be plugged into \theoremref{thm:acl}
