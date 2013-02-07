@@ -74,7 +74,7 @@ parallel, in which case selecting batches of points can lead to a
 significant increase in sampling throughput.
 
 \paragraph{Contributions}
-The main contributions of this paper can be summarized as follows:
+The main contributions of this thesis can be summarized as follows:
 \begin{itemize}
 \item We introduce the \acl algorithm for sequentially estimating level sets
       of unknown functions and also extend it to select samples in batches.
@@ -143,18 +143,29 @@ every point $\*x \in D$ into a \emph{superlevel set}
 ${H = \{\*x \in D \mid f(\*x) > h\}}$ and a \emph{sublevel set}
 ${L = \{\*x \in D \mid f(\*x) \leq h\}}$.
 
-In the \emph{strictly sequential} setting,
-at each step $t \geq 1$, we select a point $\*x_t \in D$ to be evaluated and
-obtain a noisy measurement $y_t = f(\*x_t) + n_t$.
-In the \emph{batch} setting we select $B$ points at a time and only obtain
-the resulting measurements after all of the $B$ points have been selected.
-
 When an explicit level is not available, we can define an
 \emph{implicit threshold level}
 with respect to the function maximum in either absolute or relative terms.
 We use the relative definition in our exposition with
 ${h = \omega \max_{\*x\in D} f(\*x)}$
 and $\omega \in (0, 1)$.
+
+In the \emph{strictly sequential} setting,
+at each step $t \geq 1$, we select a point $\*x_t \in D$ to be evaluated and
+obtain a noisy measurement $y_t = f(\*x_t) + n_t$.
+In the \emph{batch} setting we select $B$ points at a time and only obtain
+the resulting measurements after all of the $B$ points have been selected.
+This setting can be generalized by using the notion of a
+\emph{feedback function} introduced by \citet{desautels12}.
+In particular, we assume that there is a function
+${\fb : \mathbb{N} \to \mathbb{N}\cup\{0\}}$, such that
+$\fb[t] \leq t-1$ for all $t \geq 1$, and when selecting the next point
+at time step $t$, we have access to evaluated measurements up to
+time step $\fb[t]$. For selecting batches of size $B$ we can define
+$\fb[1] = \ldots = \fb[B] = 0$,\enskip$\fb[B+1] = \ldots = \fb[2B] = B$,
+and so on,
+but the feedback function also allows for defining more complex cases
+of delayed feedback.
 
 \section{Gaussian processes}
 \looseness -1 Without any assumptions about the function $f$, attempting to estimate level sets from few samples is a hopeless endeavor.

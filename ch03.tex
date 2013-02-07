@@ -1,0 +1,284 @@
+\chapter{Extensions} \label{sect:ext} 
+We now extend \acl to deal with the two problem variants introduced
+in \sectref{sect:prelim}, namely implicitly defined threshold levels and
+batch point selection. We highlight the key differences
+in the extended versions of the algorithm and the resulting implications about
+the convergence bound of \theoremref{thm:acl}.
+
+\section{Implicit threshold level} \label{sect:iacl}
+The substitution of the explicit threshold level by an implicit level
+${h = \omega \max_{\*x\in D} f(\*x)}$ requires modifying the
+classification rules as well as the selection rule of \acl, which results
+in what we call the \iacl algorithm.
+
+Since $h$ is now an estimated quantity that depends
+on the function maximum, we have to take into account the
+uncertainty associated with it when making classification decisions.
+Concretely, we can obtain an \emph{optimistic estimate} of the function
+maximum as ${f^{opt}_{t} = \max_{\*x\in U_t} \max(C_t(\*x))}$ and, analogously,
+a \emph{pessimistic estimate} as
+${f^{pes}_{t} = \max_{\*x\in U_t} \min(C_t(\*x))}$. The
+corresponding estimates of the implicit level are defined as
+${h^{opt}_t = \omega f^{opt}_t}$ and ${h^{pes}_t = \omega f^{pes}_t}$, and
+can be used in a similar classification scheme to that of \acl.
+However, for the above estimates to be correct, we have to ensure that $U_t$
+always contains all points that could be maximizers of $f$,
+i.e. all points that satisfy $\max(C_t(\*x)) \geq f^{pes}_{t}$.
+For that purpose, points that should be classified, but are still possible
+function maximizers according to the above inequality, are kept in two sets
+$M^H_t$ and $M^L_t$ respectively, while a new set
+$Z_t = U_t \cup M^H_t \cup M^L_t$ is used in place of $U_t$ to
+obtain the optimistic and pessimistic estimates $h^{opt}_t$
+and $h^{pes}_t$.
+The resulting classification rules are shown in
+\linesref{ln:iclass1}{ln:iclass2} of
+\algoref{alg:iacl}, where the conditions are,
+again, relaxed by an accuracy parameter $\epsilon$.
+
+\begin{algorithm}[tb]
+\caption{The \iacl extension}
+\label{alg:iacl}
+\small{
+\begin{algorithmic}[1]
+  \REQUIRE sample set $D$, GP prior ($\mu_0 = 0$, $k$, $\sigma_0$),\\
+           \hspace{1.35em}threshold ratio $\omega$, accuracy parameter $\epsilon$
+  \ENSURE predicted sets $\hat{H}$, $\hat{L}$
+  \STATE $H_0 \gets \varnothing$,\enskip $L_0 \gets \varnothing$,\enskip $U_0 \gets D$\new{,\enskip $Z_0 \gets D$}
+  %\LET{$H_0$}{$\varnothing$} \label{lin:init1}
+  %\LET{$L_0$}{$\varnothing$}
+  %\LET{$U_0$}{$D$}
+  %\LET{$Z_0$}{$D$}
+  \LET{$C_0(\*x)$}{$\mathbb{R}$, for all $\*x \in D$} \label{lin:init2}
+  \LET{$t$}{1}
+  \WHILE{$U_{t-1} \neq \varnothing$}
+    \STATE $H_t \gets H_{t-1}$,\enskip $L_t \gets L_{t-1}$,\enskip $U_t \gets U_{t-1}$\new{,\enskip $Z_t \gets Z_{t-1}$}
+    %\LET{$H_t$}{$H_{t-1}$}
+    %\LET{$L_t$}{$L_{t-1}$}
+    %\LET{$U_t$}{$U_{t-1}$}
+    %\LET{$Z_t$}{$Z_{t-1}$}
+    \FORALL{$\*x \in U_{t-1}$}
+      \LET{$C_{t}(\*x)$}{$C_{t-1}(\*x) \cap Q_t(\*x)$}
+      \new{
+      \LET{$h^{opt}_{t}$}{$\omega\max_{\*x\in Z_{t-1}}\max(C_t(\*x))$}
+      \LET{$f^{pes}_{t}$}{$\max_{\*x\in Z_{t-1}}\min(C_t(\*x))$}
+      \LET{$h^{pes}_{t}$}{$\omega f_{pes}$}
+      }
+      \IF{$\min(C_t(\*x)) + \epsilon \geq h^{\new{opt}}_{\new{t}}$} \label{ln:iclass1}
+        \LET{$U_t$}{$U_t \setminus \{\*x\}$}
+        \new{
+        \IF{$\max(C_t(\*x)) < f^{pes}_{t}$}
+        \LET{$H_t$}{$H_t \cup \{\*x\}$}
+        \ELSE
+        \LET{$M^H_t$}{$M^H_t \cup \{\*x\}$}
+        \ENDIF
+        }
+      \ELSIF{$\max(C_t(\*x)) - \epsilon \leq h^{\new{pes}}_{\new{t}}$}
+        \LET{$U_t$}{$U_t \setminus \{\*x\}$}
+        \new{
+        \IF{$\max(C_t(\*x)) < f^{pes}_{t}$}
+        \LET{$L_t$}{$L_t \cup \{\*x\}$}
+        \ELSE
+        \LET{$M^L_t$}{$M^L_t \cup \{\*x\}$}
+        \ENDIF
+        }
+      \ENDIF \label{ln:iclass2}
+    \ENDFOR
+    \new{
+    \LET{$Z_t$}{$U_t \cup M^H_t \cup M^L_t$}
+    }
+    \LET{$\*x_t$}{$\argmax_{\*x \in \new{Z_t}}(\new{w_t}(\*x))$}
+    \LET{$y_t$}{$f(\*x_t) + \nu_t$} \label{lin:sel2}
+    \STATE Compute $\mu_t(\*x)$ and $\sigma_t(\*x)$, for all $\*x \in U_t$ \label{lin:inf}
+    \LET{$t$}{$t + 1$}
+  \ENDWHILE
+  \LET{$\hat{H}$}{$H_{t-1} \new{\ \cup\ M^H_{t-1}}$}
+  \LET{$\hat{L}$}{$L_{t-1} \new{\ \cup\ M^L_{t-1}}$}
+\end{algorithmic}
+}
+\end{algorithm}
+
+In contrast to \acl, which solely focuses on sampling the most ambiguous
+points, in \iacl it is also of importance to have a more exploratory
+sampling policy in order to obtain more accurate estimates
+$f^{opt}_{t}$ and $f^{pes}_{t}$. To this end, we select at each
+iteration the point with the largest confidence region \emph{width},
+defined as
+\begin{align*}
+w_t(\*x) = \max(C_t(\*x)) - \min(C_t(\*x)).
+\end{align*}
+Note that, if confidence intervals were not intersected, this would be
+equivalent to maximum variance sampling (within $Z_t$).
+
+\paragraph{Theoretical analysis}
+The main challenge in extending the results of \theoremref{thm:acl} to the
+implicit threshold level setting,
+stems from the fact that achieving a certain level of classification accuracy,
+now also depends on having accurate estimates of $h$. This translates into
+appropriately bounding $h^{opt}_{t} - h^{pes}_{t}$, while, at the same time,
+guaranteeing that classification is still being performed correctly (by showing
+that $h^{opt}_t > h$ and $h^{pes}_t < h$).
+The following theorem expresses the resulting convergence bound for \iacl.
+
+\begin{theorem}
+\label{thm:iacl}
+For any $\omega \in (0, 1)$, $\delta \in (0, 1)$, and $\epsilon > 0$,
+if $\beta_t = 2\log(|D|\pi^2 t^2/(6\delta))$, \iacl terminates after
+at most $T$ iterations, where $T$ is the smallest positive integer
+satisfying
+\begin{align*}
+\frac{T}{\beta_T \gamma_T} \geq \frac{C_1(1+\omega)^2}{4\epsilon^2},
+%T/(\beta_T \gamma_T) \geq C_1(1+\omega)^2/(4\epsilon^2),
+\end{align*}
+where $C_1 = 8/\log(1 + \sigma^{-2})$.
+
+Furthermore, with probability at least $1-\delta$, the algorithm returns
+an $\epsilon$-accurate solution with respect to the implicit level
+$h = \omega \max_{\*x\in D} f(\*x)$, that is
+\begin{align*}
+\Pr\left\{\max_{\*x\in D}\ell_h(\*x) \leq \epsilon\right\} \geq 1 - \delta.
+\end{align*}
+\end{theorem}
+Note that the sample complexity bound of \theoremref{thm:iacl} is a factor
+$(1+\omega)^2\leq 4$ larger than that of \theoremref{thm:acl}, and that
+$\omega=0$ actually reduces to an explicit threshold of $0$.
+
+\section{Batch sample selection} \label{sect:bacl}
+In the batch setting, the algorithms are only allowed to use the
+observed values of previous batches when selecting samples for the
+current batch.
+A naive way of extending \acl (resp. \iacl) to this setting would be to
+modify the selection rule so that, instead of picking the point with
+the largest ambiguity (resp.~width), it chooses the $B$ highest ranked
+points. However, this approach tends to select ``clusters'' of closely
+located samples with high ambiguities (resp.~widths), ignoring
+the decrease in the estimated variance of a point resulting from sampling
+another point nearby.
+
+Fortunately, we can handle the above issue by exploiting a key property of GPs,
+namely that
+the predictive variances \eqtref{eq:var} depend only on the selected points
+$\*x_t$ and not on the observed values $y_t$ at those points. Therefore,
+even if we do not
+have available feedback for each selected point up to iteration $t$, we
+can still obtain the following useful confidence intervals
+\begin{align*}
+Q_t^b(\*x) = \left[\mu_{\fb[t]}(\*x) \pm \eta_t^{1/2}\sigma_{t-1}(\*x)\right],
+\end{align*}
+which combine the most recent available mean estimate
+($\fb[t]$ being the index of the last available observation)
+with the always up-to-date variance estimate. Confidence regions $C_t^b(\*x)$ are
+defined as before by intersecting successive confidence intervals and are
+used without any further changes in the algorithms.
+However, to guarantee convergence we must compensate for using outdated mean estimates,
+by employing a more conservative
+(i.e., larger) scaling parameter $\eta_t$ compared to $\beta_t$,
+in order to ensure that the resulting confidence regions $C_t^b(\*x)$
+still contain $f(\*x)$ with high probability.\footnotemark[2] 
+The pseudocode of \algoref{alg:bacl} highlights the way in which
+evaluation feedback is obtained in \bacl. Variable $t_{\fb}$ holds the
+latest step for which there is available feedback at each iteration and
+the inferred mean is updated whenever new feedback is available, as
+dictated by $\fb[t+1]$. However, note that the inferred variance is
+updated at each iteration, irrespectively of available feedback.
+The batch extension of \iacl works in a completely analogous way.
+
+\begin{algorithm}[tb]
+  \caption{The \bacl extension}
+  \label{alg:bacl}
+\begin{algorithmic}[1]
+  \REQUIRE sample set $D$, GP prior ($\mu_0 = 0$, $k$, $\sigma_0$),\\
+           \hspace{1.6em}threshold value $h$, accuracy parameter $\epsilon$
+  \ENSURE predicted sets $\hat{H}$, $\hat{L}$
+  \STATE $H_0 \gets \varnothing$,\enskip $L_0 \gets \varnothing$,\enskip $U_0 \gets D$ \label{lin:binit1}
+  %\LET{$H_0$}{$\varnothing$} \label{lin:init1}
+  %\LET{$L_0$}{$\varnothing$}
+  %\LET{$U_0$}{$D$}
+  \LET{$C^{\new{b}}_0(\*x)$}{$\mathbb{R}$, for all $\*x \in D$} \label{lin:binit2}
+  \LET{$t$}{1}
+  \new{\LET{$t_{\fb}$}{0}}
+  \WHILE{$U_{t-1} \neq \varnothing$}
+    \STATE $H_t \gets H_{t-1}$,\enskip $L_t \gets L_{t-1}$,\enskip $U_t \gets U_{t-1}$
+    %\LET{$H_t$}{$H_{t-1}$}
+    %\LET{$L_t$}{$L_{t-1}$}
+    %\LET{$U_t$}{$U_{t-1}$}
+    \FORALL{$\*x \in U_{t-1}$}
+      \LET{$C^{\new{b}}_{t}(\*x)$}{$C^{\new{b}}_{t-1}(\*x) \cap Q^{\new{b}}_t(\*x)$} \label{lin:bupd}
+      \IF{$\min(C^{\new{b}}_t(\*x)) + \epsilon > h$} \label{lin:bclass1}
+        \LET{$U_t$}{$U_t \setminus \{\*x\}$}
+        \LET{$H_t$}{$H_t \cup \{\*x\}$} 
+      \ELSIF{$\max(C^{\new{b}}_t(\*x)) - \epsilon \leq h$} \label{lin:bclassr2}
+        \LET{$U_t$}{$U_t \setminus \{\*x\}$}
+        \LET{$L_t$}{$L_t \cup \{\*x\}$}
+      \ENDIF \label{lin:bclass2}
+    \ENDFOR
+    \LET{$\*x_t$}{$\argmax_{\*x \in U_t}(a^{\new{b}}_t(\*x))$} \label{lin:sel1}
+    \new{
+    \IF{$\fb[t+1] > t_{\fb}$}
+      \FOR{$i = t_{\fb}+1,\ldots,\fb[t+1]$}
+        \LET{$y_i$}{$f(\*x_i) + \nu_i$}
+      \ENDFOR
+      \STATE Compute $\mu_t(\*x)$ for all $\*x \in U_t$
+      \LET{$t_{\fb}$}{$\fb[t+1]$}
+    \ENDIF
+    }
+    \STATE Compute $\sigma_t(\*x)$ for all $\*x \in U_t$
+    \LET{$t$}{$t + 1$}
+  \ENDWHILE
+  \LET{$\hat{H}$}{$H_{t-1}$} \label{lin:bret1}
+  \LET{$\hat{L}$}{$L_{t-1}$} \label{lin:bret2}
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Theoretical analysis}
+To appropriately adjust the confidence interval scaling parameter,
+in their analysis for extending the \gpucb algorithm to the batch
+setting, \citet{desautels12} utilized the
+\emph{conditional information gain}
+\begin{align*}
+I(\*y_A; f \mid \*y_{1:\fb[t]}) = H(\*y_A\mid\*y_{1:\fb[t]}) - H(\*y_A\mid f),
+\end{align*}
+which quantifies the reduction in uncertainty about $f$ by obtaining
+a number of observations $\*y_A$, given that we already have observations
+$\*y_{1:\fb[t]}$ available.
+Following a similar treatment, we extend the convergence bound of
+\theoremref{thm:acl} to the batch selection setting of
+\bacl via bounding the maximum conditional information gain, resulting
+in the following theorem.
+
+\begin{theorem}
+\label{thm:bacl}
+Assume that the feedback delay $t - \fb[t]$ is at most $B$ for all $t \geq 1$,
+where $B$ is a known constant.
+Also, assume that for all $t \geq 1$ the maximum conditional mutual information
+acquired by any set of measurements since the last feedback is bounded
+by a constant $C \geq 0$, i.e.
+\begin{align*}
+\max_{A\subseteq D, |A|\leq B-1} I(f; \*y_A \mid \*y_{1:\fb[t]}) \leq C
+\end{align*}
+Then, for any $h\in\mathbb{R}$, $\delta \in (0, 1)$, and $\epsilon \geq 0$,
+if $\eta_t = e^C\beta_{fb[t]+1}$, \bacl terminates after
+at most $T$ iterations, where $T$ is the smallest positive integer
+satisfying
+\begin{align*}
+\frac{T}{\eta_T \gamma_T} \geq \frac{C_1}{4\epsilon^2},
+\end{align*}
+where $C_1 = 8/\log(1 + \sigma^{-2})$.
+
+Furthermore, with probability at least $1-\delta$, the algorithm returns
+an $\epsilon$-accurate solution, that is
+\begin{align*}
+\Pr\left\{\max_{\*x\in D}\ell_h(\*x) \leq \epsilon\right\} \geq 1 - \delta.
+\end{align*}
+\end{theorem}
+
+Note that, as intuitively described in the main text, the scaling parameter
+$\eta_t$ has to increase by a factor of $e^C$ to compensate for the outdated
+mean estimates used in the confidence regions $C_t^b(\*x)$. Normally, $C$
+depends on the batch size $B$. However, \citet{desautels12} have shown that,
+initializing their \gpbucb algorithm with a number of sequentially selected
+maximum variance samples, results in a constant factor increase of $\eta_t$
+compared to $\beta_t$, independently of $B$.
+In \sectref{sect:exp}, we also used maximum variance initialization in our
+experiments, which
+allowed us to select a constant value of $\eta_t$ (larger than $\beta_t$)
+that worked well across different batch sizes.

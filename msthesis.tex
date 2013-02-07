@@ -7,16 +7,11 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{wrapfig}
-\usepackage{algorithm}
-\usepackage{algorithmic}
 \usepackage{amsmath,amssymb}
-\usepackage{bm}                % Bold math symbols
 \usepackage{amsthm}            % For theorems, lemmas, etc.
 \usepackage{xspace}            % Controls space after user-defined command
 \usepackage{fixltx2e}          % For subscripts in normal text
 \usepackage[nottoc]{tocbibind} % Include bibliography in TOC
-\usepackage{hyperref}
-\usepackage{makeidx}
 \usepackage{msthesis}
 
 % Fonts
@@ -24,18 +19,6 @@
 \setsansfont{Myriad Pro}
 \setmonofont[Scale=0.9]{Consolas}
 %\leading{9pt}
-
-% Algorithm related
-\renewcommand{\algorithmicrequire}{\textbf{Input:}}
-\renewcommand{\algorithmicensure}{\textbf{Output:}}
-\newcommand*\LNot{\textbf{not}\xspace}
-\newcommand*\LAnd{\textbf{and}\xspace}
-\newcommand*\LET[2]{\STATE #1 $\gets$ #2}
-\newcommand*\Fcall[1]{\textsc{#1}}
-\makeatletter
-\newcommand{\setalglineno}[1]{%
-  \setcounter{ALC@line}{\numexpr#1-1}}
-\makeatother
 
 % Abbreviations
 \newcommand{\gpucb}{\textsf{GP-UCB}\xspace}
@@ -56,6 +39,9 @@
 \hyphenation{Ra-hi-mi}
 \hyphenation{Co-ver}
 
+% Misc
+\newcommand{\fb}{\mathop{\mathrm{fb}}}
+
 
 \begin{document}
 
@@ -70,6 +56,7 @@
 %\renewcommand{\chaptermark}[1]{\markright{\thechapter #1}}
 \input{ch01.tex}
 \input{ch02.tex}
+\input{ch03.tex}
 \input{appendix.tex}
 
 \backmatter

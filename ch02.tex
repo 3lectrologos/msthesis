@@ -52,17 +52,19 @@ $\hat{H}$ and $\hat{L}$ are returned (\linesref{lin:ret1}{lin:ret2}).
 \small{
 \begin{algorithmic}[1]
   \REQUIRE sample set $D$, GP prior ($\mu_0 = 0$, $k$, $\sigma_0$),\\
-           \hspace{1.6em}threshold value $h$, accuracy parameter $\epsilon$
+           \hspace{1.35em}threshold value $h$, accuracy parameter $\epsilon$
   \ENSURE predicted sets $\hat{H}$, $\hat{L}$
-  \LET{$H_0$}{$\varnothing$} \label{lin:init1}
-  \LET{$L_0$}{$\varnothing$}
-  \LET{$U_0$}{$D$}
+  \STATE $H_0 \gets \varnothing$,\enskip $L_0 \gets \varnothing$,\enskip $U_0 \gets D$ \label{lin:binit1}
+  %\LET{$H_0$}{$\varnothing$} \label{lin:init1}
+  %\LET{$L_0$}{$\varnothing$}
+  %\LET{$U_0$}{$D$}
   \LET{$C_0(\*x)$}{$\mathbb{R}$, for all $\*x \in D$} \label{lin:init2}
   \LET{$t$}{1}
   \WHILE{$U_{t-1} \neq \varnothing$}
-    \LET{$H_t$}{$H_{t-1}$}
-    \LET{$L_t$}{$L_{t-1}$}
-    \LET{$U_t$}{$U_{t-1}$} 
+    \STATE $H_t \gets H_{t-1}$,\enskip $L_t \gets L_{t-1}$,\enskip $U_t \gets U_{t-1}$
+    %\LET{$H_t$}{$H_{t-1}$}
+    %\LET{$L_t$}{$L_{t-1}$}
+    %\LET{$U_t$}{$U_{t-1}$} 
     \FORALL{$\*x \in U_{t-1}$}
       \LET{$C_{t}(\*x)$}{$C_{t-1}(\*x) \cap Q_t(\*x)$} \label{lin:upd}
       \IF{$\min(C_t(\*x)) + \epsilon > h$} \label{lin:class1}
@@ -110,20 +112,24 @@ stays so until the algorithm terminates.
 \begin{figure}[tb]
   \begin{subfigure}[b]{0.49\linewidth}
     \centering
-    \includegraphics[height=1.5in]{figures/class}
+    \includegraphics[height=1.7in]{figures/class}
     \caption{Confidence regions}
     \label{fig:conf}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.49\linewidth}
     \centering
-    \includegraphics[height=1.5in]{figures/amb}
+    \includegraphics[height=1.7in]{figures/amb}
     \caption{Ambiguities}
     \label{fig:amb}
   \end{subfigure}
   \caption{
-    (a) Example of the three possible configurations of confidence regions.
-    (b) Ambiguities (shaded) of two example points.
+    (a) Example of the three possible configurations of confidence regions:
+        $\*x$ will be classified into $H_t$, $\*x''$ into $L_t$, whereas
+        $\*x'$ will remain unclassified.
+    (b) Ambiguities of two example points: $\*x$ is a point of high ambiguity
+        (close to $w_t(\*x)/2$), while $\*x'$ has low ambiguity (close to
+        $\epsilon$).
   }
 \end{figure}
 
@@ -135,12 +141,25 @@ a_t(\*x) = \min\{\max(C_t(\*x)) - h, h - \min(C_t(\*x))\},
 \end{align*}
 which we call classification \emph{ambiguity}. As its name suggests, the
 ambiguity of a point $\*x$ quantifies our uncertainty about whether $\*x$
-belongs to $H_t$ or $L_t$ (see \figref{fig:amb}).
+belongs to $H_t$ or $L_t$.
 The intuition of sampling at areas of the sample space with large
 classification uncertainty, expecting to gain more information about
 the problem at hand when sampling at those areas, manifests itself in \acl
 by choosing to evaluate at each iteration the point with the largest
 ambiguity amongst the yet unclassified.
+
+Note that, if we define the confidence region \emph{width} of a point $\*x$ as
+\begin{align*}
+w_t(\*x) = \max(C_t(\*x)) - \min(C_t(\*x)),
+\end{align*}
+it follows from the the classification rules of \acl that
+\begin{align*}
+\epsilon \leq a_t(\*x) \leq w_t(\*x)/2,\ \text{for every}\ \*x\in U_t.
+\end{align*}
+Ambiguity values close to $w_t(\*x)/2$ indicate that the confidence region of
+$\*x$ extends almost equally above and below the threshold level $h$, while
+values close to $\epsilon$ indicate that $\*x$ is close to being classified
+into $H_t$ or $L_t$ (see \figref{fig:amb}).
 
 We can make an interesting observation at this point. If we use the confidence
 intervals $Q_t(\*x)$ instead of the confidence regions $C_t(\*x)$

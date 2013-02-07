@@ -6,6 +6,7 @@
 % -----------------------------------------------------------------------------
 
 % Style (taken from ICML 2013)
+\RequirePackage{hyperref}
 \RequirePackage{color}
 \definecolor{mydarkblue}{rgb}{0,0.08,0.45}
 \hypersetup{ %
@@ -77,6 +78,7 @@
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
 
 % Bold math symbol shortcut
+\RequirePackage{bm}
 \def\*#1{\bm{#1}}
 
 % Theory environments
@@ -91,8 +93,7 @@
 % -----------------------------------------------------------------------------
 
 \RequirePackage{xstring}
-\RequirePackage{xcolor}
-\RequirePackage{lettrine}
+\RequirePackage[usenames,dvipsnames]{xcolor}
 \RequirePackage[sf]{titlesec}
 
 % Chapter colorbox definition
@@ -231,7 +232,7 @@
 % Tikz figures setup
 % -----------------------------------------------------------------------------
 
-\usepackage{pgfplots}
+\RequirePackage{pgfplots}
 \usetikzlibrary{external}
 \tikzset{external/system call={xelatex --enable-write18 -halt-on-error -interaction=batchmode -jobname "\image" "\texsource"}}
 \tikzset{external/force remake}
@@ -257,6 +258,33 @@
 \renewcommand{\dbltopfraction}{0.9}	% fit big float above 2-col. text
 \renewcommand{\textfraction}{0.05}	% allow minimal text w. figs
 
+
+% -----------------------------------------------------------------------------
+% Algorithm related
+% -----------------------------------------------------------------------------
+\RequirePackage{algorithm}
+\RequirePackage{algorithmic}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\newcommand*\LNot{\textbf{not}\xspace}
+\newcommand*\LAnd{\textbf{and}\xspace}
+\newcommand*\LET[2]{\STATE #1 $\gets$ #2}
+\newcommand*\Fcall[1]{\textsc{#1}}
+\makeatletter
+\newcommand{\setalglineno}[1]{%
+  \setcounter{ALC@line}{\numexpr#1-1}}
+\makeatother
+\renewcommand{\algorithmiccomment}[1]{// #1}
+\newcommand{\LINEIF}[2]{%
+    \STATE\algorithmicif\ {#1}\ \algorithmicthen\ {#2}%
+}
+\newcommand{\LINEELSE}[1]{%
+    \STATE\algorithmicelse\ {#1}%
+}
+
+% Highlight changes
+\newcommand\new[1]{{\color{RubineRed}#1}}
 
 % -----------------------------------------------------------------------------
 % Misc
