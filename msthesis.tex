@@ -4,12 +4,14 @@
 \usepackage{leading}
 \usepackage{natbib}
 \usepackage{graphicx}
+\usepackage{adjustbox}         % For trimming included graphics in xetex
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{wrapfig}
 \usepackage{amsmath,amssymb}
 \usepackage{amsthm}            % For theorems, lemmas, etc.
 \usepackage{xspace}            % Controls space after user-defined command
+\usepackage{enumitem}
 \usepackage{fixltx2e}          % For subscripts in normal text
 \usepackage[nottoc]{tocbibind} % Include bibliography in TOC
 \usepackage{msthesis}
@@ -41,6 +43,7 @@
 
 % Misc
 \newcommand{\fb}{\mathop{\mathrm{fb}}}
+\newcommand{\trimlen}{0pt}
 
 
 \begin{document}
@@ -57,6 +60,7 @@
 \input{ch01.tex}
 \input{ch02.tex}
 \input{ch03.tex}
+\input{ch04.tex}
 \input{appendix.tex}
 
 \backmatter

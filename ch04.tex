@@ -1,0 +1,198 @@
+\chapter{Experiments} \label{sect:exp} 
+In this section, we evaluate our proposed algorithms on two real-world datasets
+and compare them to the state-of-the-art.
+In more detail, the algorithms and their setup are as follows.
+\begin{description}[labelindent=0pt,leftmargin=7pt,itemindent=-2pt,itemsep=0pt]
+\item[\acl/\iacl:] Since the bound of \theoremref{thm:acl} is fairly conservative,
+  in our experiments we used a constant value of $\beta_t^{1/2} = 3$, which is
+  somewhat smaller than the values suggested by the theorem.
+\item[\bacl/\ibacl:] We used $\eta_t^{1/2} = 4$ and a batch size of $B = 30$.
+  Furthermore, as proposed by \citet{desautels12}, we initialized the
+  algorithms with $T^{init} = 30$ sequentially chosen maximum variance samples.
+\item[\str:] The state-of-the-art straddle heuristic,
+  as proposed by \citet{bryan05}, with the selection rule
+  ${\*x_t = \argmax_{\*x \in D} \left(1.96\sigma_{t-1}(\*x) - |\mu_{t-1}(\*x) - h|\right)}$.
+\item[\istr:] For the implicit threshold setting, we have defined a
+  variant of the straddle heuristic that uses at each step the
+  implicitly defined threshold level with respect to the maximum of the
+  inferred mean, i.e.
+  ${h_t = \omega \max_{\*x\in D} \mu_{t-1}(\*x)}$.
+\item[\rstr/\bstr:] We have defined two batch versions of the straddle heuristic:
+  \rstr selects the $B = 30$ points with
+  the largest straddle score, while \bstr follows a similar approach to \bacl
+  by using the following selection rule
+  \begin{align*}
+  {\*x_t = \argmax_{\*x \in D}\left(1.96\sigma_{t-1}(\*x) - |\mu_{\fb[t]}(\*x) - h|\right)}.
+  \end{align*}
+\item[\var:]  The maximum variance rule
+  $\*x_t = \argmax_{\*x \in D} \sigma_{t-1}(\*x)$.
+\end{description}
+
+We assess the classification accuracy for all algorithms using the $F_1$-score, i.e.
+the harmonic mean of precision and recall, by considering points in the super-
+and sublevel sets as positives and negatives respectively.
+Finally, in all evaluations of \acl and its extensions, the accuracy parameter
+$\epsilon$ is chosen to increase exponentially from $2\%$ up to $20\%$ of the
+maximum value of each dataset.
+
+\paragraph{Dataset 1: Network latency}
+Our first dataset consists of round-trip time (RTT) measurements obtained
+by ``pinging'' 1768 servers spread around the world.
+The sample space consists of the longitude and latitude coordinates of each
+server, as determined by a commercial geolocation
+database\footnote{\url{http://www.maxmind.com}}.
+Example applications for geographic RTT level set estimation, include
+monitoring global networks and improving quality of service for applications
+such as internet telephony or online games. Furthermore,
+selecting samples in batches results in significant time savings, since
+sending out and receiving multiple ICMP packets can be virtually performed in
+parallel.
+
+We used 200 randomly selected measurements to fit suitable hyperparameters for
+an anisotropic Mat\'{e}rn-5~\mbox{\cite{rasmussen06}} kernel by maximum
+likelihood  and the remaining 1568 for evaluation.
+The threshold level we chose for the experiments was $h = 200$ ms.
+
+
+\paragraph{Dataset 2: Environmental monitoring}
+Our second dataset comes from the domain of environmental monitoring of inland
+waters and consists of 2024 \emph{in situ} measurements of chlorophyll
+%and {\it planktothrix rubescens}\footnote{a genus
+%of the blue-green algae, which can produce toxins}
+%\cite{hitz12}. cite this in the final version
+concentration within a vertical transect plane, collected by an autonomous
+surface vessel in a lake.
+Monitoring chlorophyll concentration is useful in analyzing limnological
+phenomena such as algal bloom. Since chlorophyll levels can vary throughout
+the year, in addition to having a fixed threshold concentration, 
+it can also be useful to be able to detect
+relative ``hotspots'' of chlorophyll, i.e. regions of high concentration
+with respect to the current maximum. Furthermore, selecting batches of points
+can be used to plan sampling paths and reduce the required traveling
+distances.
+
+In our evaluation, we used $10,000$ points sampled in a $100 \times 100$ grid
+from the GP posterior that was derived using the 2024 original measurements
+(see~\figref{fig:limno_chl}).
+Again, an anisotropic Mat\'{e}rn-5 kernel was used and suitable
+hyperparameters were fitted by maximizing the
+likelihood of a second available chlorophyll dataset from the same lake.
+We used an explicit threshold level of $h = 1.3$ RFU and chose $\omega = 0.74$
+for the implicit threshold case, so that the resulting implicit level is
+identical to the explicit one, which enables us to compare the two settings on
+equal ground.
+The effect of batch sampling on the required traveling distance was evaluated
+using an approximate Euclidean TSP solver to create paths connecting each
+batch of samples selected by \bacl.
+
+\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+\renewcommand\trimlen{2pt}
+\begin{figure*}[t]
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    %\input{figures/p_ping_seq.tex}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_ping_seq}
+    \caption{\textsf{[N]} Explicit threshold -- sequential}
+	  \label{fig:ping-seq}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    %\input{figures/p_chl_seq.tex}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_chl_seq}
+    \caption{\textsf{[E]} Explicit threshold -- sequential}
+	\label{fig:chl-seq}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    %\input{figures/p_ping_batch.tex}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_ping_batch}
+    \caption{\textsf{[N]} Explicit threshold -- batch}
+	  \label{fig:ping-batch}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    %\input{figures/p_chl_batch.tex}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_chl_batch}
+    \caption{\textsf{[E]} Explicit threshold -- batch}
+	  \label{fig:chl-batch}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    %\input{figures/p_chl_imp.tex}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_chl_imp}
+    \caption{\textsf{[E]} Implicit threshold}
+	  \label{fig:chl-imp}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    %\input{figures/p_chl_tsp.tex}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_chl_tsp}
+    \caption{\textsf{[E]} Travel lengths for varying batch sizes}
+	  \label{fig:chl-tsp}
+  \end{subfigure}
+  \caption{Results for the network latency \textsf{[N]} and environmental
+           monitoring \textsf{[E]} datasets.
+           (a), (b) \acl is competitive with \str, while both clearly
+           outperform \var.
+           (c), (d) \bacl and \bstr are only slightly worse than
+           \str, while the naive \rstr is far inferior.
+           (e) \iacl and \ibacl achieve high accuracy
+           at a slower rate than the explicit threshold algorithms,
+           while \istr fails to do so.
+           (f) Using larger batch sizes for planning dramatically reduces
+           the traveled path lengths.
+           \vspace{-1em}}
+  \label{fig:exp}
+\end{figure*}
+
+\paragraph{Results and discussion}
+\figsref{fig:ping-seq} and~\ref{fig:chl-seq} compare the performance of the
+strictly sequential algorithms on the two datasets. In both cases, \acl and
+\str are comparable in performance, which is expected given the similarity
+of their selection rules (see \sectref{sect:acl}). The slight superiority
+of \str in \figref{fig:ping-seq} can be explained by the fact that \acl uses
+a more conservative
+value of $\beta_t$, which is required to avoid premature (mis)classification
+phenomena in its monotonic classification scheme. On the other hand, note
+that due to its aggressive sampling behavior, \str can in some cases suffer
+from insufficient exploration.\footnotemark[2]
+Although \var is commonly used for estimating functions over their entire
+domain, it is clearly outperformed by both algorithms and, thus, deemed
+unsuitable for the task of level set estimation.
+
+In \figsref{fig:chl-batch} and~\ref{fig:ping-batch} we show the performance
+of the batch algorithms on the two datasets. The \bacl and \bstr algorithms,
+which use the always up-to-date variance estimates for selecting batches,
+achieve similar performance. Furthermore, there is only a slight performance
+penalty when compared to the strictly sequential \str, which can easily be
+outweighed by the benefits of batch point selection (e.g. in the network
+latency example, the batch algorithms would have about $B = 30$ times higher
+throughput). As expected, the \rstr algorithm, performs significantly
+worse than the other two batch algorithms, since it selects a lot of
+redundant samples in areas of high straddle score
+(cf. \sectref{sect:bacl}).
+
+\figref{fig:chl-imp} shows the results of the implicit threshold experiments
+on the environmental monitoring dataset. The difficulty of estimating the
+function maximum at the same time as performing classification with respect to
+the implicit threshold level is manifested in the notably larger sampling cost
+of \iacl required to achieve high accuracy compared to the explicit threshold
+experiments. As before, the batch version of
+\iacl is only slightly worse that its sequential counterpart.
+More importantly, the naive \istr algorithm completely
+fails to achieve high accuracy, as it gets stuck with a wrong estimate of
+the maximum and never recovers, since the straddle rule is not
+sufficiently exploratory.
+
+Finally, \figref{fig:chl-tsp} displays the dramatically lower required travel
+length by using batches of samples for path planning: to achieve
+an $F_1$-score of 0.95 using sequential sampling requires more than six times
+larger traveling distance than planning ahead with $B = 30$
+samples per batch.
