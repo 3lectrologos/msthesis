@@ -48,15 +48,24 @@ selecting samples in batches results in significant time savings, since
 sending out and receiving multiple ICMP packets can be virtually performed in
 parallel.
 
-We used 200 randomly selected measurements to fit suitable hyperparameters for
+We used $200$ randomly selected measurements to fit suitable hyperparameters for
 an anisotropic Mat\'{e}rn-5~\mbox{\cite{rasmussen06}} kernel by maximum
-likelihood  and the remaining 1568 for evaluation.
+likelihood  and the remaining $1568$ for evaluation.
 The threshold level we chose for the experiments was $h = 200$ ms.
 
+%\setlength\figureheight{1.7in}\setlength\figurewidth{3.4in}
+%\input{figures/map.tex}
+\begin{figure}[tb]
+  \centering
+  \adjincludegraphics[width=4in]{figures/map}
+  \caption{Round-trip times in milliseconds obtained by pinging from Zurich
+           1768 servers around the world.}
+  \label{fig:map}
+\end{figure}
 
 \paragraph{Dataset 2: Environmental monitoring}
 Our second dataset comes from the domain of environmental monitoring of inland
-waters and consists of 2024 \emph{in situ} measurements of chlorophyll
+waters and consists of $2024$ \emph{in situ} measurements of chlorophyll
 %and {\it planktothrix rubescens}\footnote{a genus
 %of the blue-green algae, which can produce toxins}
 %\cite{hitz12}. cite this in the final version
@@ -70,6 +79,18 @@ relative ``hotspots'' of chlorophyll, i.e. regions of high concentration
 with respect to the current maximum. Furthermore, selecting batches of points
 can be used to plan sampling paths and reduce the required traveling
 distances.
+
+%\setlength\figureheight{1.5in}\setlength\figurewidth{3.4in}
+%\input{figures/limno_bgape_fp.tex}
+\begin{figure}[tb]
+  \centering
+  \hspace{-0.7em}
+  \adjincludegraphics[width=4in]{figures/limno_bgape_fp}
+  \caption{Algae concentration in relative fluorescence units (RFU)
+           inferred from $2024$ measurements within a vertical transect plane
+           of Lake Zurich (target level set at $h = 7$ RFU shown dashed).}
+  \label{fig:limno_bgape}
+\end{figure}
 
 In our evaluation, we used $10,000$ points sampled in a $100 \times 100$ grid
 from the GP posterior that was derived using the 2024 original measurements
@@ -147,8 +168,7 @@ batch of samples selected by \bacl.
            at a slower rate than the explicit threshold algorithms,
            while \istr fails to do so.
            (f) Using larger batch sizes for planning dramatically reduces
-           the traveled path lengths.
-           \vspace{-1em}}
+           the traveled path lengths.}
   \label{fig:exp}
 \end{figure*}
 
