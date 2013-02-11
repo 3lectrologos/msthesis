@@ -1,5 +1,5 @@
 \chapter{Experiments} \label{sect:exp} 
-In this section, we evaluate our proposed algorithms on two real-world datasets
+In this section, we evaluate our proposed algorithms on three real-world datasets
 and compare them to the state-of-the-art.
 In more detail, the algorithms and their setup are as follows.
 \begin{description}[labelindent=0pt,leftmargin=7pt,itemindent=-2pt,itemsep=0pt]
@@ -37,7 +37,7 @@ maximum value of each dataset.
 
 \paragraph{Dataset 1: Network latency}
 Our first dataset consists of round-trip time (RTT) measurements obtained
-by ``pinging'' 1768 servers spread around the world.
+by ``pinging'' $1768$ servers spread around the world.
 The sample space consists of the longitude and latitude coordinates of each
 server, as determined by a commercial geolocation
 database\footnote{\url{http://www.maxmind.com}}.
@@ -63,22 +63,22 @@ The threshold level we chose for the experiments was $h = 200$ ms.
   \label{fig:map}
 \end{figure}
 
-\paragraph{Dataset 2: Environmental monitoring}
-Our second dataset comes from the domain of environmental monitoring of inland
-waters and consists of $2024$ \emph{in situ} measurements of chlorophyll
-%and {\it planktothrix rubescens}\footnote{a genus
-%of the blue-green algae, which can produce toxins}
-%\cite{hitz12}. cite this in the final version
-concentration within a vertical transect plane, collected by an autonomous
-surface vessel in a lake.
-Monitoring chlorophyll concentration is useful in analyzing limnological
-phenomena such as algal bloom. Since chlorophyll levels can vary throughout
-the year, in addition to having a fixed threshold concentration, 
-it can also be useful to be able to detect
-relative ``hotspots'' of chlorophyll, i.e. regions of high concentration
-with respect to the current maximum. Furthermore, selecting batches of points
-can be used to plan sampling paths and reduce the required traveling
-distances.
+\paragraph{Datasets 2 \& 3: Environmental monitoring}
+Our second and third datasets come from the domain of environmental monitoring
+of inland
+waters and consist of $2024$ \emph{in situ} measurements of chlorophyll
+and \emph{Planktothrix rubescens}\footnote{Planktothrix rubescens is a genus of
+blue-green algae that can produce toxins.}
+concentration respectively, which where collected by an autonomous surface
+vessel within a vertical transect plane of Lake Zurich \cite{hitz12}.
+Monitoring chlorophyll and algae concentration is useful in analyzing
+limnological phenomena such as algal bloom. Since the concentration levels can
+vary throughout the year, in addition to having a fixed threshold
+concentration, it can also be useful to be able to detect
+relative ``hotspots'' of chlorophyll or algae, i.e. regions of high
+concentration with respect to the current maximum. Furthermore, selecting
+batches of points can be used to plan sampling paths and reduce the required
+traveling distances.
 
 %\setlength\figureheight{1.5in}\setlength\figurewidth{3.4in}
 %\input{figures/limno_bgape_fp.tex}
@@ -93,15 +93,19 @@ distances.
 \end{figure}
 
 In our evaluation, we used $10,000$ points sampled in a $100 \times 100$ grid
-from the GP posterior that was derived using the $2024$ original measurements
-(see~\figref{fig:limno_chl}).
-Again, an anisotropic Mat\'{e}rn-5 kernel was used and suitable
+from the GP posteriors that were derived using the $2024$ original measurements
+(see \figsref{fig:limno_chl} and \ref{fig:limno_bgape}).
+Again, anisotropic Mat\'{e}rn-5 kernels were used and suitable
 hyperparameters were fitted by maximizing the
-likelihood of a second available chlorophyll dataset from the same lake.
-We used an explicit threshold level of $h = 1.3$ RFU and chose $\omega = 0.74$
-for the implicit threshold case, so that the resulting implicit level is
-identical to the explicit one, which enables us to compare the two settings on
-equal ground.
+likelihood of two different chlorophyll and algae concentration datasets from
+the same lake.
+As illustrated in \figsref{fig:limno_chl} and \ref{fig:limno_bgape}, we used
+explicit threshold levels of $h = 1.3$ RFU (relative fluorescence units) for the
+chlorophyll dataset and
+$h = 7$ RFU for the algae concentration dataset. For the implicit threshold
+experiments, we chose the values of $\omega$ so that the resulting implicit
+levels are identical to the explicit ones, which enables us to compare the two
+settings on equal ground.
 The effect of batch sampling on the required traveling distance was evaluated
 using an approximate Euclidean TSP solver to create paths connecting each
 batch of samples selected by \bacl.
