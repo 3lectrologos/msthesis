@@ -110,14 +110,13 @@ Note that, if confidence intervals were not intersected, this would be
 equivalent to maximum variance sampling (within $Z_t$).
 
 \paragraph{Theoretical analysis}
-The main challenge in extending the results of \theoremref{thm:acl} to the
-implicit threshold level setting,
-stems from the fact that achieving a certain level of classification accuracy,
-now also depends on having accurate estimates of $h$. This translates into
-appropriately bounding $h^{opt}_{t} - h^{pes}_{t}$, while, at the same time,
-guaranteeing that classification is still being performed correctly (by showing
-that $h^{opt}_t > h$ and $h^{pes}_t < h$).
-The following theorem expresses the resulting convergence bound for \iacl.
+The idea of using the maximum information gain can again be used to provide
+a convergence bound for the \iacl algorithm. Some modifications to the analysis
+are required due to the difference in the classification rules, i.e. the use
+of estimates $h_t^{opt}$ and $h_t^{pes}$ instead of $h$ and the use of the
+extended set $Z_t$ instead of $U_t$.
+The following theorem expresses for the \iacl algorithm a similar in form bound
+to that of \theoremref{thm:acl}.
 
 \begin{theorem}
 \label{thm:iacl}
@@ -138,6 +137,39 @@ $h = \omega \max_{\*x\in D} f(\*x)$, that is
 \Pr\left\{\max_{\*x\in D}\ell_h(\*x) \leq \epsilon\right\} \geq 1 - \delta.
 \end{align*}
 \end{theorem}
+
+The detailed proof of \theoremref{thm:iacl} can be found in
+\sectref{sect:app_iacl}. Here we outline the main similarities and differences
+compared to the proof of \theoremref{thm:acl}.
+As in the explicit threshold case, using the maximum information gain $\gamma_t$,
+we show that $w_t(\*x_t)$ decreases as
+$\mathcal{O}((\frac{\beta_t \gamma_t}{t})^\frac{1}{2})$\footnote{In fact, we could
+have used \iacl's selection rule in \acl without any change in the convergence bound
+of \theoremref{thm:acl}. However, as we will see in the following chapter, the
+ambiguity-based selection rule performs slightly better in practice.}. Furthermore,
+as before, the ``validity'' of the confidence regions is guaranteed by choosing
+$\beta_t$ appropriately. However, the steps of proving
+termination and $\epsilon$-accuracy need to be modified as follows.
+\begin{description}
+\item[Termination.] Due to \iacl's classification rules, in order to prove that
+      the algorithm terminates (\lemmaref{lem:isterm}), we need to show that
+      the gap between the
+      optimistic $h_t^{opt}$ and pessimistic $h_t^{pes}$ threshold level
+      estimates gets
+      small enough. This is accomplished by bounding $h_t^{opt} - h_t^{pes}$
+      by a constant multiple of $w_t(\*x_t)$ (\lemmaref{lem:hdif}) and using
+      the known decreasing bound on the latter (\lemmaref{lem:iwbound}).
+\item[Solution accuracy.] To prove $\epsilon$-accuracy of the returned
+      solution with respect to the implicit threshold level, we prove 
+      that our optimistic and pessimistic estimates are valid upper and
+      lower bounds of the true implicit level at each iteration, i.e.
+      that $h_t^{opt} \geq h$ and $h_t^{pes} \leq h$, for all $t\geq 1$
+      (\lemmasref{lem:hopt} and~\ref{lem:hpes}). This is the point
+      where keeping all possible maximizers as sampling candidates in \iacl
+      is formally required
+      (cf. \lemmasref{lem:fpes_inc} and \lemmaref{lem:mmeq}).
+\end{description}
+
 Note that the sample complexity bound of \theoremref{thm:iacl} is a factor
 $(1+\omega)^2\leq 4$ larger than that of \theoremref{thm:acl}, and that
 $\omega=0$ actually reduces to an explicit threshold of $0$.

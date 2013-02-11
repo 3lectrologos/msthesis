@@ -93,7 +93,7 @@ distances.
 \end{figure}
 
 In our evaluation, we used $10,000$ points sampled in a $100 \times 100$ grid
-from the GP posterior that was derived using the 2024 original measurements
+from the GP posterior that was derived using the $2024$ original measurements
 (see~\figref{fig:limno_chl}).
 Again, an anisotropic Mat\'{e}rn-5 kernel was used and suitable
 hyperparameters were fitted by maximizing the
@@ -107,6 +107,9 @@ using an approximate Euclidean TSP solver to create paths connecting each
 batch of samples selected by \bacl.
 
 \setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+%\input{figures/ev_chl_seq.tex}
+%\input{figures/ev_bgape_seq.tex}
+
 \renewcommand\trimlen{2pt}
 \begin{figure*}[t]
   \begin{subfigure}[b]{0.49\textwidth}
@@ -114,15 +117,32 @@ batch of samples selected by \bacl.
     %\input{figures/p_ping_seq.tex}
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_ping_seq}
     \caption{\textsf{[N]} Explicit threshold -- sequential}
-	  \label{fig:ping-seq}
+	  \label{fig:chl-seq}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     %\input{figures/p_chl_seq.tex}
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_chl_seq}
-    \caption{\textsf{[E]} Explicit threshold -- sequential}
-	\label{fig:chl-seq}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_ping_batch}
+    \caption{\textsf{[N]} Explicit threshold -- batch}
+	\label{fig:bgape-seq}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    %\input{figures/p_ping_seq.tex}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_seq}
+    \caption{\textsf{[C]} Explicit threshold -- sequential}
+	  \label{fig:chl-seq}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    %\input{figures/p_chl_seq.tex}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq}
+    \caption{\textsf{[A]} Explicit threshold -- sequential}
+	\label{fig:bgape-seq}
   \end{subfigure}
 
   \begin{subfigure}[b]{0.49\textwidth}
