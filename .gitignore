@@ -5,6 +5,7 @@
 *.synctex
 *.toc
 *.ind
+*.dpth
 /*
 !/.gitignore
 !/*.tex
