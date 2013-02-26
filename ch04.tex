@@ -111,15 +111,19 @@ using an approximate Euclidean TSP solver to create paths connecting each
 batch of samples selected by \bacl.
 
 \setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+%\input{figures/ev_ping_seq.tex}
 %\input{figures/ev_chl_seq.tex}
 %\input{figures/ev_bgape_seq.tex}
+%\input{figures/ev_bgape_seq_str_sc.tex}
+%\input{figures/ev_bgape_seq_acl_sc.tex}
+%\input{figures/limno_bgape_str_class400.tex}
 
 \renewcommand\trimlen{2pt}
 \begin{figure*}[t]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     %\input{figures/p_ping_seq.tex}
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_ping_seq}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_seq}
     \caption{\textsf{[N]} Explicit threshold -- sequential}
 	  \label{fig:chl-seq}
   \end{subfigure}
@@ -127,8 +131,8 @@ batch of samples selected by \bacl.
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     %\input{figures/p_chl_seq.tex}
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_ping_batch}
-    \caption{\textsf{[N]} Explicit threshold -- batch}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_seq}
+    \caption{\textsf{[C]} Explicit threshold -- sequential}
 	\label{fig:bgape-seq}
   \end{subfigure}
 
@@ -136,15 +140,15 @@ batch of samples selected by \bacl.
     \centering
     \vspace{12pt} % space of this row from above captions
     %\input{figures/p_ping_seq.tex}
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_seq}
-    \caption{\textsf{[C]} Explicit threshold -- sequential}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq}
+    \caption{\textsf{[A]} Explicit threshold -- sequential}
 	  \label{fig:chl-seq}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     %\input{figures/p_chl_seq.tex}
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/limno_bgape_str_class400}
     \caption{\textsf{[A]} Explicit threshold -- sequential}
 	\label{fig:bgape-seq}
   \end{subfigure}
@@ -153,7 +157,7 @@ batch of samples selected by \bacl.
     \centering
     \vspace{12pt} % space of this row from above captions
     %\input{figures/p_ping_batch.tex}
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_ping_batch}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq_str_sc}
     \caption{\textsf{[N]} Explicit threshold -- batch}
 	  \label{fig:ping-batch}
   \end{subfigure}
@@ -161,38 +165,14 @@ batch of samples selected by \bacl.
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     %\input{figures/p_chl_batch.tex}
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_chl_batch}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq_acl_sc}
     \caption{\textsf{[E]} Explicit threshold -- batch}
 	  \label{fig:chl-batch}
   \end{subfigure}
 
-  \begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    \vspace{12pt} % space of this row from above captions
-    %\input{figures/p_chl_imp.tex}
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_chl_imp}
-    \caption{\textsf{[E]} Implicit threshold}
-	  \label{fig:chl-imp}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    %\input{figures/p_chl_tsp.tex}
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/p_chl_tsp}
-    \caption{\textsf{[E]} Travel lengths for varying batch sizes}
-	  \label{fig:chl-tsp}
-  \end{subfigure}
   \caption{Results for the network latency \textsf{[N]} and environmental
            monitoring \textsf{[E]} datasets.
-           (a), (b) \acl is competitive with \str, while both clearly
-           outperform \var.
-           (c), (d) \bacl and \bstr are only slightly worse than
-           \str, while the naive \rstr is far inferior.
-           (e) \iacl and \ibacl achieve high accuracy
-           at a slower rate than the explicit threshold algorithms,
-           while \istr fails to do so.
-           (f) Using larger batch sizes for planning dramatically reduces
-           the traveled path lengths.}
+           (d) $F_1$-score of 0.37}
   \label{fig:exp}
 \end{figure*}
 
