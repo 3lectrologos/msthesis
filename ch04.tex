@@ -110,7 +110,7 @@ The effect of batch sampling on the required traveling distance was evaluated
 using an approximate Euclidean TSP solver to create paths connecting each
 batch of samples selected by \bacl.
 
-\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+%\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
 %\input{figures/ev_ping_seq.tex}
 %\input{figures/ev_chl_seq.tex}
 %\input{figures/ev_bgape_seq.tex}
@@ -122,57 +122,102 @@ batch of samples selected by \bacl.
 \begin{figure*}[t]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
-    %\input{figures/p_ping_seq.tex}
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_seq}
-    \caption{\textsf{[N]} Explicit threshold -- sequential}
+    \caption{\textsf{[N]} Means}
 	  \label{fig:chl-seq}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
-    %\input{figures/p_chl_seq.tex}
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_seq}
-    \caption{\textsf{[C]} Explicit threshold -- sequential}
+    \caption{\textsf{[C]} Means}
 	\label{fig:bgape-seq}
   \end{subfigure}
 
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \vspace{12pt} % space of this row from above captions
-    %\input{figures/p_ping_seq.tex}
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq}
-    \caption{\textsf{[A]} Explicit threshold -- sequential}
+    \caption{\textsf{[A]} Means}
 	  \label{fig:chl-seq}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
-    %\input{figures/p_chl_seq.tex}
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/limno_bgape_str_class400}
-    \caption{\textsf{[A]} Explicit threshold -- sequential}
+    \caption{\textsf{[A]} \str after $t=400$ iterations}
 	\label{fig:bgape-seq}
   \end{subfigure}
 
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \vspace{12pt} % space of this row from above captions
-    %\input{figures/p_ping_batch.tex}
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq_str_sc}
-    \caption{\textsf{[N]} Explicit threshold -- batch}
+    \caption{\textsf{[A]} \str scatter}
 	  \label{fig:ping-batch}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
-    %\input{figures/p_chl_batch.tex}
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq_acl_sc}
-    \caption{\textsf{[E]} Explicit threshold -- batch}
+    \caption{\textsf{[A]} \acl scatter}
 	  \label{fig:chl-batch}
   \end{subfigure}
 
-  \caption{Results for the network latency \textsf{[N]} and environmental
-           monitoring \textsf{[E]} datasets.
-           (d) $F_1$-score of 0.37}
+  \caption{Performance of explicit threshold sequential algorithms on the
+           three datasets.
+           (a), (b) \acl and \str are comparable and both clearly outperform
+           \var.
+           (c) \str performs poorly due to limited exploration.
+           (d) An example of a \str execution getting stuck: even after $400$
+           iterations it has only achieved an $F_1$-score of $0.37$.
+           (e), (f) The results of (c) in more detail: About a third of \str's
+           executions achieve an $F_1$-score of less than $0.4$, while \acl
+           always achieves an $F_1$-score of at least $0.9$.
+           }
+  \label{fig:exp}
+\end{figure*}
+
+
+%\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+%\input{figures/ev_ping_batch.tex}
+%\input{figures/ev_chl_batch.tex}
+%\input{figures/ev_bgape_batch.tex}
+%\input{figures/limno_bgape_rstr_class400.tex}
+
+\renewcommand\trimlen{2pt}
+\begin{figure*}[t]
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_batch}
+    \caption{\textsf{[N]} Means}
+	  \label{fig:chl-seq}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_batch}
+    \caption{\textsf{[C]} Means}
+	\label{fig:bgape-seq}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_batch}
+    \caption{\textsf{[A]} Means}
+	  \label{fig:chl-seq}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/limno_bgape_rstr_class400}
+    \caption{\textsf{[C]} \rstr after $t=400$ iterations}
+	\label{fig:bgape-seq}
+  \end{subfigure}
+
+  \caption{Performance of explicit threshold batch algorithms on the
+           three datasets.}
   \label{fig:exp}
 \end{figure*}
 
@@ -186,7 +231,7 @@ a more conservative
 value of $\beta_t$, which is required to avoid premature (mis)classification
 phenomena in its monotonic classification scheme. On the other hand, note
 that due to its aggressive sampling behavior, \str can in some cases suffer
-from insufficient exploration.\footnotemark[2]
+from insufficient exploration.
 Although \var is commonly used for estimating functions over their entire
 domain, it is clearly outperformed by both algorithms and, thus, deemed
 unsuitable for the task of level set estimation.
