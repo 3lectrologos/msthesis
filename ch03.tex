@@ -354,14 +354,14 @@ an $\epsilon$-accurate solution, that is
 \end{align*}
 \end{theorem}
 
-Note that, as intuitively described in the main text, the scaling parameter
+Note that, as intuitively described before, the scaling parameter
 $\eta_t$ has to increase by a factor of $e^C$ to compensate for the outdated
 mean estimates used in the confidence regions $C_t^b(\*x)$. Normally, $C$
 depends on the batch size $B$. However, \citet{desautels12} have shown that,
 initializing their \gpbucb algorithm with a number of sequentially selected
 maximum variance samples, results in a constant factor increase of $\eta_t$
 compared to $\beta_t$, independently of $B$.
-In \sectref{sect:exp}, we also used maximum variance initialization in our
-experiments, which
-allowed us to select a constant value of $\eta_t$ (larger than $\beta_t$)
-that worked well across different batch sizes.
+In the following chapter, we also use maximum variance initialization in our
+experiments, which allows us to select a constant value of $\eta_t$
+(larger than $\beta_t$)
+that works well across different batch sizes.

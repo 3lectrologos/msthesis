@@ -28,12 +28,13 @@ In more detail, the algorithms and their setup are as follows.
   $\*x_t = \argmax_{\*x \in D} \sigma_{t-1}(\*x)$.
 \end{description}
 
-We assess the classification accuracy for all algorithms using the $F_1$-score, i.e.
-the harmonic mean of precision and recall, by considering points in the super-
-and sublevel sets as positives and negatives respectively.
+We assess the classification accuracy for all algorithms using the $F_1$-score,
+i.e. the harmonic mean of precision and recall, by considering points in the
+super- and sublevel sets as positives and negatives respectively.
 Finally, in all evaluations of \acl and its extensions, the accuracy parameter
-$\epsilon$ is chosen to increase exponentially from $2\%$ up to $20\%$ of the
-maximum value of each dataset.
+$\epsilon$ is chosen to increase exponentially within a suitable range depending
+on the experiment (roughly between $1\%$ and $20\%$ of the respective
+threshold level).
 
 \paragraph{Dataset 1: Network latency}
 Our first dataset consists of round-trip time (RTT) measurements obtained
@@ -80,18 +81,6 @@ concentration with respect to the current maximum. Furthermore, selecting
 batches of points can be used to plan sampling paths and reduce the required
 traveling distances.
 
-%\setlength\figureheight{1.5in}\setlength\figurewidth{3.4in}
-%\input{figures/limno_bgape_fp.tex}
-\begin{figure}[tb]
-  \centering
-  \hspace{-0.7em}
-  \adjincludegraphics[width=4in]{figures/limno_bgape_fp}
-  \caption{Algae concentration in relative fluorescence units (RFU)
-           inferred from $2024$ measurements within a vertical transect plane
-           of Lake Zurich (target level set at $h = 7$ RFU shown dashed).}
-  \label{fig:limno_bgape}
-\end{figure}
-
 In our evaluation, we used $10,000$ points sampled in a $100 \times 100$ grid
 from the GP posteriors that were derived using the $2024$ original measurements
 (see \figsref{fig:limno_chl} and \ref{fig:limno_bgape}).
@@ -117,21 +106,20 @@ batch of samples selected by \bacl.
 %\input{figures/ev_bgape_seq_str_sc.tex}
 %\input{figures/ev_bgape_seq_acl_sc.tex}
 %\input{figures/limno_bgape_str_class400.tex}
-
 \renewcommand\trimlen{2pt}
 \begin{figure*}[t]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_seq}
     \caption{\textsf{[N]} Means}
-	  \label{fig:chl-seq}
+	  \label{fig:ping-seq}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_seq}
     \caption{\textsf{[C]} Means}
-	\label{fig:bgape-seq}
+	\label{fig:chl-seq}
   \end{subfigure}
 
   \begin{subfigure}[b]{0.49\textwidth}
@@ -139,14 +127,14 @@ batch of samples selected by \bacl.
     \vspace{12pt} % space of this row from above captions
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq}
     \caption{\textsf{[A]} Means}
-	  \label{fig:chl-seq}
+	  \label{fig:bgape-seq}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/limno_bgape_str_class400}
     \caption{\textsf{[A]} \str after $t=400$ iterations}
-	\label{fig:bgape-seq}
+	\label{fig:bgape-str-class}
   \end{subfigure}
 
   \begin{subfigure}[b]{0.49\textwidth}
@@ -154,14 +142,14 @@ batch of samples selected by \bacl.
     \vspace{12pt} % space of this row from above captions
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq_str_sc}
     \caption{\textsf{[A]} \str scatter}
-	  \label{fig:ping-batch}
+	  \label{fig:bgape-seq-str-sc}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq_acl_sc}
     \caption{\textsf{[A]} \acl scatter}
-	  \label{fig:chl-batch}
+	  \label{fig:bgape-seq-acl-sc}
   \end{subfigure}
 
   \caption{Performance of explicit threshold sequential algorithms on the
@@ -184,21 +172,20 @@ batch of samples selected by \bacl.
 %\input{figures/ev_chl_batch.tex}
 %\input{figures/ev_bgape_batch.tex}
 %\input{figures/limno_bgape_rstr_class400.tex}
-
 \renewcommand\trimlen{2pt}
 \begin{figure*}[t]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_batch}
     \caption{\textsf{[N]} Means}
-	  \label{fig:chl-seq}
+	  \label{fig:ping-batch}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_batch}
     \caption{\textsf{[C]} Means}
-	\label{fig:bgape-seq}
+	\label{fig:chl-batch}
   \end{subfigure}
 
   \begin{subfigure}[b]{0.49\textwidth}
@@ -206,14 +193,14 @@ batch of samples selected by \bacl.
     \vspace{12pt} % space of this row from above captions
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_batch}
     \caption{\textsf{[A]} Means}
-	  \label{fig:chl-seq}
+	  \label{fig:bgape-batch}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/limno_bgape_rstr_class400}
     \caption{\textsf{[C]} \rstr after $t=400$ iterations}
-	\label{fig:bgape-seq}
+	\label{fig:bgape-rstr-class}
   \end{subfigure}
 
   \caption{Performance of explicit threshold batch algorithms on the
@@ -221,8 +208,66 @@ batch of samples selected by \bacl.
   \label{fig:exp}
 \end{figure*}
 
-\paragraph{Results and discussion}
-\figsref{fig:ping-seq} and~\ref{fig:chl-seq} compare the performance of the
+%\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+%\input{figures/ev_chl_imp.tex}
+%\input{figures/ev_bgape_imp.tex}
+%\input{figures/ev_bgape_imp_istr_sc.tex}
+%\input{figures/ev_bgape_imp_iacl_sc.tex}
+%\input{figures/ev_bgape_imp_istr_h.tex}
+%\input{figures/ev_bgape_imp_iacl_h.tex}
+\renewcommand\trimlen{2pt}
+\begin{figure*}[t]
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_imp}
+    \caption{\textsf{[N]} Means}
+	  \label{fig:chl-imp}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp}
+    \caption{\textsf{[C]} Means}
+	\label{fig:bgape-imp}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_istr_sc}
+    \caption{\textsf{[A]} Means}
+	  \label{fig:bgape-imp-istr-sc}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_iacl_sc}
+    \caption{\textsf{[C]} \rstr after $t=400$ iterations}
+	\label{fig:bgape-imp-iacl-sc}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_istr_h}
+    \caption{\textsf{[A]} Means}
+	  \label{fig:bgape-imp-istr-h}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_iacl_h}
+    \caption{\textsf{[C]} \rstr after $t=400$ iterations}
+	\label{fig:bgape-imp-iacl-h}
+  \end{subfigure}
+
+  \caption{Performance of implicit threshold algorithms on the environmental
+           monitoring datasets.}
+  \label{fig:exp}
+\end{figure*}
+
+\section{Results I:\hspace{0.33em}Explicit threshold level}
+\figsref{fig:ping-seq}--\ref{fig:chl-seq} compare the performance of the
 strictly sequential algorithms on the two datasets. In both cases, \acl and
 \str are comparable in performance, which is expected given the similarity
 of their selection rules (see \sectref{sect:acl}). The slight superiority
@@ -248,6 +293,7 @@ worse than the other two batch algorithms, since it selects a lot of
 redundant samples in areas of high straddle score
 (cf. \sectref{sect:bacl}).
 
+\section{Results II:\hspace{0.33em}Implicit threshold level}
 \figref{fig:chl-imp} shows the results of the implicit threshold experiments
 on the environmental monitoring dataset. The difficulty of estimating the
 function maximum at the same time as performing classification with respect to
@@ -260,6 +306,7 @@ fails to achieve high accuracy, as it gets stuck with a wrong estimate of
 the maximum and never recovers, since the straddle rule is not
 sufficiently exploratory.
 
+\section{Results III:\hspace{0.33em}Path planning}
 Finally, \figref{fig:chl-tsp} displays the dramatically lower required travel
 length by using batches of samples for path planning: to achieve
 an $F_1$-score of 0.95 using sequential sampling requires more than six times

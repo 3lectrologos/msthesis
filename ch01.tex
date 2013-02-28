@@ -15,8 +15,9 @@ monitoring a lake environment for algal bloom, a phenomenon that is
 potentially harmful to other organisms of the ecosystem. One way to
 accomplish this, is by
 determining the regions of the lake where the levels of algae-produced
-chlorophyll are above some threshold value determined by field experts
-(see \figref{fig:limno_chl}).
+chlorophyll (see \figref{fig:limno_chl}) and
+algae (see \figref{fig:limno_bgape}) concentration lie above some threshold
+value determined by field experts.
 These regions can be estimated by sampling
 at various locations of the lake using a mobile sensing device.
 However, each measurement is costly in terms of time and sensor battery power,
@@ -24,15 +25,26 @@ therefore the sampling locations have to be picked carefully, in order to
 reduce the total number of measurements required.
 
 %\setlength\figureheight{1.5in}\setlength\figurewidth{3.5in}
-%\input{figures/limno_chl_fp.tex}
-
-\begin{figure}[tb]
+%\input{figures/ch01/limno_chl_fp.tex}
+\begin{figure}[b]
   \centering
-  \includegraphics[width=4in,clip,trim=7pt 7pt 7pt 7pt]{figures/limno_chl_fp}
+  \adjincludegraphics[width=4in,clip,trim=1pt 1pt 1pt 1pt]{figures/ch01/limno_chl_fp}
   \caption{Chlorophyll concentration in relative fluorescence units (RFU)
            inferred from $2024$ measurements within a vertical transect plane
            of Lake Zurich (target level set at $h = 1.3$ RFU shown dashed).}
   \label{fig:limno_chl}
+\end{figure}
+
+%\setlength\figureheight{1.5in}\setlength\figurewidth{3.5in}
+%\input{figures/ch01/limno_bgape_fp.tex}
+\begin{figure}[t]
+  \centering
+  \hspace{-0.7em}
+  \adjincludegraphics[width=4in,clip,trim=1pt 1pt 1pt 1pt]{figures/ch01/limno_bgape_fp}
+  \caption{Algae concentration in relative fluorescence units (RFU)
+           inferred from $2024$ measurements within a vertical transect plane
+           of Lake Zurich (target level set at $h = 7$ RFU shown dashed).}
+  \label{fig:limno_bgape}
 \end{figure}
 
 Other example applications in the context of environmental
