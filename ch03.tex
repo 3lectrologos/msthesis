@@ -248,15 +248,13 @@ can still obtain the following useful confidence intervals
 Q_t^b(\*x) = \left[\mu_{\fb[t]}(\*x) \pm \eta_t^{1/2}\sigma_{t-1}(\*x)\right],
 \end{align*}
 which combine the most recent available mean estimate
-($\fb[t]$ being the index of the last available observation)
-with the always up-to-date variance estimate. Confidence regions $C_t^b(\*x)$ are
+with the always up-to-date variance estimate.
+Here $\fb[t]$ is the index of the last available observation expressed
+using the feedback function $\fb$ introduced in \sectref{sect:prelim}.
+Confidence regions $C_t^b(\*x)$ are
 defined as before by intersecting successive confidence intervals and are
 used without any further changes in the algorithms.
-However, to guarantee convergence we must compensate for using outdated mean estimates,
-by employing a more conservative
-(i.e., larger) scaling parameter $\eta_t$ compared to $\beta_t$,
-in order to ensure that the resulting confidence regions $C_t^b(\*x)$
-still contain $f(\*x)$ with high probability.\footnotemark[2] 
+
 The pseudocode of \algoref{alg:bacl} highlights the way in which
 evaluation feedback is obtained in \bacl. Variable $t_{\fb}$ holds the
 latest step for which there is available feedback at each iteration and
@@ -313,9 +311,16 @@ The batch extension of \iacl works in a completely analogous way.
 \end{algorithm}
 
 \paragraph{Theoretical analysis}
+Intuitively, to extend the convergence guarantees of the sequential algorithms
+we have to compensate for using outdated mean estimates
+by employing a more conservative
+(i.e. larger) scaling parameter $\eta_t$ as compared to $\beta_t$.
+This ensures that the resulting confidence regions $C_t^b(\*x)$
+still contain $f(\*x)$ with high probability.
+
 To appropriately adjust the confidence interval scaling parameter,
 in their analysis for extending the \gpucb algorithm to the batch
-setting, \citet{desautels12} utilized the
+setting \citet{desautels12} utilized the
 \emph{conditional information gain}
 \begin{align*}
 I(\*y_A; f \mid \*y_{1:\fb[t]}) = H(\*y_A\mid\*y_{1:\fb[t]}) - H(\*y_A\mid f),
@@ -354,7 +359,11 @@ an $\epsilon$-accurate solution, that is
 \end{align*}
 \end{theorem}
 
-Note that, as intuitively described before, the scaling parameter
+The detailed proof of \theoremref{thm:bacl} can be found in
+\sectref{sect:app_bacl} and a completely analogous theorem can be
+formulated for extending \iacl to the batch setting.
+
+Note that, as intuitively described above, the scaling parameter
 $\eta_t$ has to increase by a factor of $e^C$ to compensate for the outdated
 mean estimates used in the confidence regions $C_t^b(\*x)$. Normally, $C$
 depends on the batch size $B$. However, \citet{desautels12} have shown that,
