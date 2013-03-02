@@ -1,6 +1,7 @@
 \chapter{Experiments} \label{sect:exp} 
-In this section, we evaluate our proposed algorithms on three real-world datasets
-and compare them to the state-of-the-art.
+In this section, we present the results of evaluating our proposed algorithms on
+three real-world datasets and compare them to the state-of-the-art in sequential
+level set estimation.
 In more detail, the algorithms and their setup are as follows.
 \begin{description}[labelindent=0pt,leftmargin=7pt,itemindent=-2pt,itemsep=0pt]
 \item[\acl/\iacl:] Since the bound of \theoremref{thm:acl} is fairly conservative,
@@ -28,17 +29,9 @@ In more detail, the algorithms and their setup are as follows.
   $\*x_t = \argmax_{\*x \in D} \sigma_{t-1}(\*x)$.
 \end{description}
 
-We assess the classification accuracy for all algorithms using the $F_1$-score,
-i.e. the harmonic mean of precision and recall, by considering points in the
-super- and sublevel sets as positives and negatives respectively.
-Finally, in all evaluations of \acl and its extensions, the accuracy parameter
-$\epsilon$ is chosen to increase exponentially within a suitable range depending
-on the experiment (roughly between $1\%$ and $20\%$ of the respective
-threshold level).
-
 \paragraph{Dataset 1: Network latency}
 Our first dataset consists of round-trip time (RTT) measurements obtained
-by ``pinging'' $1768$ servers spread around the world.
+by ``pinging'' $1768$ servers spread around the world (see \figref{fig:map}).
 The sample space consists of the longitude and latitude coordinates of each
 server, as determined by a commercial geolocation
 database\footnote{\url{http://www.maxmind.com}}.
@@ -70,7 +63,7 @@ of inland
 waters and consist of $2024$ \emph{in situ} measurements of chlorophyll
 and \emph{Planktothrix rubescens}\footnote{Planktothrix rubescens is a genus of
 blue-green algae that can produce toxins.}
-concentration respectively, which where collected by an autonomous surface
+concentration respectively, which were collected by an autonomous surface
 vessel within a vertical transect plane of Lake Zurich \cite{hitz12}.
 Monitoring chlorophyll and algae concentration is useful in analyzing
 limnological phenomena such as algal bloom. Since the concentration levels can
@@ -99,6 +92,34 @@ The effect of batch sampling on the required traveling distance was evaluated
 using an approximate Euclidean TSP solver to create paths connecting each
 batch of samples selected by \bacl.
 
+\paragraph{Evaluation methodology}
+We assess the classification accuracy for all algorithms using the $F_1$-score,
+i.e. the harmonic mean of precision and recall, by considering points in the
+super- and sublevel sets as positives and negatives respectively.
+
+Note that the execution of the algorithms is not deterministic, because
+ties in the next point selection rules are resolved uniformly at random.
+Additionally, in the case of the environmental monitoring datasets, sampling
+from the GP posterior inherently involves randomness because of the noise
+included in the GP model. For these reasons, in our evaluation we repeated
+multiple executions of each algorithm. In particular, \str and its
+extensions as well as \var were executed $50$ times on each dataset and the
+$F_1$-score at each iteration of each execution was computed by classifying
+points according to the posterior mean of the GP trained on the already
+selected points, i.e.
+\begin{align*}
+H_t &= \{\*x \in D \mid \mu_t(\*x) \geq h\}\\
+L_t &= \{\*x \in D \mid \mu_t(\*x) < h\}.
+\end{align*}
+On the other hand, \acl and its extensions were evaluated by repeatedly
+executing each algorithm for a range of values of the accuracy parameter
+$\epsilon$ and  recording the total number of samples and the $F_1$-score after
+each execution's termination (in total $2000$ executions per algorithm
+per dataset).
+The parameter $\epsilon$ was chosen to increase
+exponentially within a suitable range depending on the experiment (roughly
+between $1\%$ and $20\%$ of the respective threshold level).
+
 %\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
 %\input{figures/ev_ping_seq.tex}
 %\input{figures/ev_chl_seq.tex}
@@ -106,11 +127,14 @@ batch of samples selected by \bacl.
 %\input{figures/ev_bgape_seq_str_sc.tex}
 %\input{figures/ev_bgape_seq_acl_sc.tex}
 %\input{figures/limno_bgape_str_class400.tex}
+%\input{figures/limno_bgape_acl_class374.tex}
+%\input{figures/limno_bgape_var_class400.tex}
 \renewcommand\trimlen{2pt}
-\begin{figure*}[t]
+\begin{figure*}[htbp]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_seq}
+    \vspace{-18pt}
     \caption{\textsf{[N]} Means}
 	  \label{fig:ping-seq}
   \end{subfigure}
@@ -118,14 +142,16 @@ batch of samples selected by \bacl.
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_seq}
+    \vspace{-18pt}
     \caption{\textsf{[C]} Means}
 	\label{fig:chl-seq}
   \end{subfigure}
 
   \begin{subfigure}[b]{0.49\textwidth}
+    \vspace{8pt} % space of this row from above captions
     \centering
-    \vspace{12pt} % space of this row from above captions
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq}
+    \vspace{-18pt}
     \caption{\textsf{[A]} Means}
 	  \label{fig:bgape-seq}
   \end{subfigure}
@@ -133,14 +159,33 @@ batch of samples selected by \bacl.
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/limno_bgape_str_class400}
+    \vspace{-18pt}
     \caption{\textsf{[A]} \str after $t=400$ iterations}
 	\label{fig:bgape-str-class}
   \end{subfigure}
 
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
-    \vspace{12pt} % space of this row from above captions
+    \vspace{8pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/limno_bgape_acl_class374}
+    \vspace{-18pt}
+    \caption{\textsf{[A]} \acl after $t=374$ iterations}
+	  \label{fig:bgape-acl-class}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/limno_bgape_var_class400}
+    \vspace{-18pt}
+    \caption{\textsf{[A]} \var after $t=400$ iterations}
+	  \label{fig:bgape-var-class}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \vspace{8pt} % space of this row from above captions
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq_str_sc}
+    \vspace{-18pt}
     \caption{\textsf{[A]} \str scatter}
 	  \label{fig:bgape-seq-str-sc}
   \end{subfigure}
@@ -148,24 +193,88 @@ batch of samples selected by \bacl.
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq_acl_sc}
+    \vspace{-18pt}
     \caption{\textsf{[A]} \acl scatter}
 	  \label{fig:bgape-seq-acl-sc}
   \end{subfigure}
 
   \caption{Performance of explicit threshold sequential algorithms on the
-           three datasets.
-           (a), (b) \acl and \str are comparable and both clearly outperform
+           network latency \textsf{[N]},
+           chlorophyll concentration \textsf{[C]},
+           and algae concentration \textsf{[A]} datasets.
+           \textbf{(a), (b)} \acl and \str are comparable and both clearly outperform
            \var.
-           (c) \str performs poorly due to limited exploration.
-           (d) An example of a \str execution getting stuck: even after $400$
+           \textbf{(c)} \str performs poorly due to limited exploration.
+           \textbf{(d)} An example of a \str execution getting stuck: even after $400$
            iterations it has only achieved an $F_1$-score of $0.37$.
-           (e), (f) The results of (c) in more detail: About a third of \str's
+           \textbf{(e)} An example of a \acl execution without any issues.
+           \textbf{(f)} An example of a \var execution: the sample space is sampled
+           rather uniformly.
+           \textbf{(g), (h)} The results of (c) in more detail: about a third of \str's
            executions achieve an $F_1$-score of less than $0.4$, while \acl
-           always achieves an $F_1$-score of at least $0.9$.
+           always achieves an $F_1$-score of at least $0.95$.
            }
   \label{fig:exp}
 \end{figure*}
 
+%\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+%\input{figures/ev_ping_rule2.tex}
+%\input{figures/ev_chl_rule2.tex}
+%\input{figures/ev_bgape_rule2.tex}
+\renewcommand\trimlen{2pt}
+\begin{figure*}[tb]
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_rule2}
+    \caption{\textsf{[N]} Means}
+	  \label{fig:ping-rule}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_rule2}
+    \caption{\textsf{[C]} Means}
+	\label{fig:ping-rule2}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_rule2}
+    \caption{\textsf{[A]} Means}
+	  \label{fig:chl-rule}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_rule2}
+    \caption{\textsf{[C]} \rstr after $t=400$ iterations}
+	\label{fig:chl-rule2}
+  \end{subfigure}
+  
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_rule2}
+    \caption{\textsf{[A]} Means}
+	  \label{fig:bgape-rule}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_rule2}
+    \caption{\textsf{[C]} \rstr after $t=400$ iterations}
+	\label{fig:bgape-rule2}
+  \end{subfigure}
+
+  \caption{Performance of different \acl selection rules on the three datasets.
+           \textbf{(a), (c), (e)} For varying $\epsilon$ there is no notable difference
+           between the three selection rules.
+           \textbf{(b), (d), (f)} When using a small fixed value of $\epsilon$ and
+           evaluating during each \acl execution, the maximum ambiguity
+           selection rule has an advantage over the other two rules.}
+  \label{fig:exp}
+\end{figure*}
 
 %\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
 %\input{figures/ev_ping_batch.tex}
@@ -173,7 +282,7 @@ batch of samples selected by \bacl.
 %\input{figures/ev_bgape_batch.tex}
 %\input{figures/limno_bgape_rstr_class400.tex}
 \renewcommand\trimlen{2pt}
-\begin{figure*}[t]
+\begin{figure*}[tb]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_batch}
@@ -204,7 +313,13 @@ batch of samples selected by \bacl.
   \end{subfigure}
 
   \caption{Performance of explicit threshold batch algorithms on the
-           three datasets.}
+           three datasets.
+           \textbf{(a)--(c)} \bacl and \bstr achieve comparable performance,
+           which is slightly worse than that of their sequential counterparts,
+           but significantly better than that of the naive \rstr algorithm.
+           \textbf{(d)} The redundant sampling behavior of \rstr resulting
+           from not using up-to-date variance estimates.
+           }
   \label{fig:exp}
 \end{figure*}
 
@@ -216,7 +331,7 @@ batch of samples selected by \bacl.
 %\input{figures/ev_bgape_imp_istr_h.tex}
 %\input{figures/ev_bgape_imp_iacl_h.tex}
 \renewcommand\trimlen{2pt}
-\begin{figure*}[t]
+\begin{figure*}[tb]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_imp}
@@ -267,31 +382,86 @@ batch of samples selected by \bacl.
 \end{figure*}
 
 \section{Results I:\hspace{0.33em}Explicit threshold level}
-\figsref{fig:ping-seq}--\ref{fig:chl-seq} compare the performance of the
-strictly sequential algorithms on the two datasets. In both cases, \acl and
-\str are comparable in performance, which is expected given the similarity
-of their selection rules (see \sectref{sect:acl}). The slight superiority
-of \str in \figref{fig:ping-seq} can be explained by the fact that \acl uses
-a more conservative
-value of $\beta_t$, which is required to avoid premature (mis)classification
-phenomena in its monotonic classification scheme. On the other hand, note
-that due to its aggressive sampling behavior, \str can in some cases suffer
-from insufficient exploration.
-Although \var is commonly used for estimating functions over their entire
-domain, it is clearly outperformed by both algorithms and, thus, deemed
-unsuitable for the task of level set estimation.
 
-In \figsref{fig:chl-batch} and~\ref{fig:ping-batch} we show the performance
-of the batch algorithms on the two datasets. The \bacl and \bstr algorithms,
+\paragraph{Sequential sampling}
+\figsref{fig:ping-seq}--\ref{fig:bgape-seq} compare the performance of the
+strictly sequential algorithms on the three datasets.
+On the first two datasets \acl and \str are comparable in performance, with
+\acl being slightly better on the chorophyll dataset and slightly worse
+on the latency dataset. However, the situation is different in the third
+dataset, where \str performs extremely poorly. The reason is that the
+algorithm can get stuck in situations where it is favorable according to
+the straddle score to continue sampling points near the currently inferred
+level set, instead of sampling points of high variance at yet unexplored
+regions that lie far away from the currently inferred level set.
+
+\figref{fig:bgape-str-class} shows an example of such an execution, where
+\str has heavily sampled the left region of the level set, but has
+completely missed the part of the level set that lies on the right of the
+transect (cf. \figref{fig:limno_bgape}).
+In \figref{fig:bgape-seq-str-sc} we depict as a scatter plot the
+detailed results of the $50$ \str executions. Note that about a third
+of the executions do not manage to achieve an $F_1$-score of 0.4, even
+after $400$ iterations, i.e. they miss the right part of the level set
+as explained above, and another third only achieve an $F_1$-score of 0.8,
+i.e. they miss the left part of the level set.
+On the other hand, as shown in \figref{fig:bgape-seq-acl-sc}, this problem
+never occurs in \acl, because of its classification regime, which implicitly
+forces exploration by excluding points that have already been classified from
+being sampled.
+
+Although \var is commonly used for estimating functions over their entire
+domain, it is clearly outperformed in our experiments, because it does not
+sufficiently focus on accurately estimating the desired level set, but
+rather samples almost uniformly over the sample space.
+
+\paragraph{Sample selection rules}
+In \figsref{fig:ping-rule}, \ref{fig:chl-rule}, and \ref{fig:bgape-rule}
+we compare the performance
+of \acl using different sample selection rules (\lineref{lin:sel1} of
+\algoref{alg:acl}). In particular, we compare the maximum ambiguity
+rule (as presented in \acl), the maximum variance rule
+(which we use in \iacl), and the rule of randomly choosing the next
+sample from $U_t$.
+
+To further investigate the potential effect of the sampling rules, we also
+ran a different set of experiments, where, instead of varying $\epsilon$
+and evaluating the $F_1$-score after termination, we fixed $\epsilon$ to a
+small value ($h/50$) and
+evaluated the different \acl variants during their execution using the
+GP posterior mean to classify points into the super- and sublevel sets
+(as explained before for \str and \var). In other words, we evaluated the
+performance obtained when the tuning of $\epsilon$ for controlling the
+required number of samples is ignored.
+
+The results are presented in \figsref{fig:ping-rule2}, \ref{fig:chl-rule2},
+and \ref{fig:bgape-rule2}. In this case, the maximum ambiguity rule
+outperforms the other two rules on all three datasets. However, note
+that in the two environmental monitoring datasets the difference is fairly
+small and the other two rules still perform considerably better than \var.
+
+To connect the above observations with the operation of \acl, recall
+that the algorithm is largely based on the progressive classification of
+points into $H_t$ and $L_t$, a process that focuses the selection of the next
+sample at each step on a set of ``interesting'' (w.r.t. to the sought after
+level set), yet unclassified points $U_t$. The
+way in which the sample is selected from $U_t$ seems to be of secondary
+importance and selecting using maximum ambiguity might provide a small
+performance benefit.
+
+\paragraph{Batch sampling}
+In \figsref{fig:ping-batch}--\ref{fig:bgape-batch} we show the performance
+of the explicit threshold batch algorithms on the three datasets. The \bacl
+and \bstr algorithms,
 which use the always up-to-date variance estimates for selecting batches,
 achieve similar performance. Furthermore, there is only a slight performance
 penalty when compared to the strictly sequential \str, which can easily be
 outweighed by the benefits of batch point selection (e.g. in the network
-latency example, the batch algorithms would have about $B = 30$ times higher
-throughput). As expected, the \rstr algorithm, performs significantly
-worse than the other two batch algorithms, since it selects a lot of
-redundant samples in areas of high straddle score
-(cf. \sectref{sect:bacl}).
+latency application, the batch algorithms would have about $B = 30$ times
+higher throughput). On the other hand, as expected, the \rstr algorithm
+performs significantly worse than the other two batch algorithms, since it
+selects a lot of redundant samples in areas of high straddle score, as depicted
+in \figref{fig:bgape-rstr-class} (cf. \sectref{sect:bacl}).
 
 \section{Results II:\hspace{0.33em}Implicit threshold level}
 \figref{fig:chl-imp} shows the results of the implicit threshold experiments
