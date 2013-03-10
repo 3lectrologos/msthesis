@@ -295,9 +295,9 @@ The batch extension of \iacl works in a completely analogous way.
     \LET{$\*x_t$}{$\argmax_{\*x \in U_t}(a^{\new{b}}_t(\*x))$} \label{lin:sel1}
     \new{
     \IF{$\fb[t+1] > t_{\fb}$}
-      \FOR{$i = t_{\fb}+1,\ldots,\fb[t+1]$}
+      \FOR{$i = t_{\fb}+1,\ldots,\fb[t+1]$} \label{lin:bsample1}
         \LET{$y_i$}{$f(\*x_i) + \nu_i$}
-      \ENDFOR
+      \ENDFOR \label{lin:bsample2}
       \STATE Compute $\mu_t(\*x)$ for all $\*x \in U_t$
       \LET{$t_{\fb}$}{$\fb[t+1]$}
     \ENDIF
@@ -374,3 +374,152 @@ In the following chapter, we also use maximum variance initialization in our
 experiments, which allows us to select a constant value of $\eta_t$
 (larger than $\beta_t$)
 that works well across different batch sizes.
+
+\section{Path planning} \label{sect:pp} Up to this point, we have assumed that obtaining a sample incurs a fixed
+cost independent of its location in the input space $D$. However, in practical
+applications like the environmental monitoring example of \chapref{ch:intro},
+obtaining a sample also involves moving a mobile sensor to the desired
+location, which implies an additional traveling cost that depends on the
+measurement location. In what follows, we present two practical ways for
+computing appropriate sampling paths: the first is based on the batch sampling
+extension of the previous section; the second is tailored to the task of
+environmental monitoring in Lake Zurich.
+
+We define a path $\mathcal{P}$ as a vector of points in $D$ and denote by
+$\mathcal{P}[i]$ the point that is the $i$-th element of that vector.
+
+\paragraph{Batch-based path planning}
+Our first method is a straightforward application of batch point selection for
+creating sampling paths. In particular, \bacl is used to select a batch of
+$B$ points, but, instead of sampling at those points in the order in which
+they were selected (\linesref{lin:bsample1}{lin:bsample2}), we first use a
+Euclidean TSP solver to create a path connecting the last sampled point of
+the previous batch and all points of the current batch.
+\figref{fig:limno_bgape_ppbatch} shows an example of the above procedure
+on the algae concentration dataset for a batch size of $B=30$.
+
+%\setlength\figureheight{1.5in}\setlength\figurewidth{2.5in}
+%\input{figures/ch03/limno_bgape_ppbatch60_0.tex}
+%\input{figures/ch03/limno_bgape_ppbatch60_1.tex}
+%\input{figures/ch03/limno_bgape_ppbatch60_2.tex}
+%\input{figures/ch03/limno_bgape_ppbatch60_3.tex}
+\renewcommand\trimlen{0pt}
+\begin{figure}[tb]
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppbatch60_0}
+    \caption{After previous batch}
+    \label{fig:limno_bgape_ppbatch1}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppbatch60_1}
+    \caption{Current batch}
+    \label{fig:limno_bgape_ppbatch2}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppbatch60_2}
+    \caption{TSP path}
+    \label{fig:limno_bgape_ppbatch3}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppbatch60_3}
+    \caption{After current batch}
+    \label{fig:limno_bgape_ppbatch4}
+  \end{subfigure}
+  \caption{
+      Path planning with \bacl using $\epsilon = 0.7$ on a regular grid of
+      $100\times 100$ points sampled from the inferred algae concentration
+      GP of \figref{fig:limno_bgape}. Regions of already classified points
+      are shown in orange ($H_t$) and blue ($L_t$), regions of yet unclassified
+      points ($U_t$) in black, and observed points
+      ($\{\*x_i\}_{1\leq i\leq t}$) as white marks.
+      \textbf{(a)} The current position, i.e. the last point of the previous
+                   batch shown as a white circle.
+      \textbf{(b)} The current batch of $B=30$ points shown as red circles.
+      \textbf{(c)} TSP path connecting the points of the current batch with
+                   the current position using a TSP path.
+      \textbf{(d)} The situation after sampling along the TSP path.
+  }
+  \label{fig:limno_bgape_ppbatch}
+\end{figure}
+
+\paragraph{Graph-based path planning}
+There are a number of shortcomings when applying the above batch-based method
+in practice. First, since selection of the batch is decoupled from its
+evaluation, there is no way to adapt the path during sampling of the points
+in the TSP path.\footnote{An alternative would be to each time sample the first
+point in the TSP path and then replan using a new batch. However, this fails
+because it does not give enough incentive to explore areas of the input space
+that lie far away from the current position.} Second, additional samples can be obtained while traveling from one location
+to another, but there is no easy way to incorporate this when planning using
+batches.
+Finally, as can be seen in the example of \figref{fig:limno_bgape_ppbatch}
+the resulting TSP path may contain several abrupt changes of direction that
+are not achievable in practice due to kinematic constraints of the mobile
+sensor equipment.
+
+To deal with the above issues, we propose a graph-based algorithm that works
+on a more constrained setting, which is suitable for tasks such as the
+environmental lake monitoring at hand. In particular, we define a graph with
+nodes on a regular grid over the input space and create edges between
+adjacent columns of the grid that encode the domain constraints. For example,
+in the lake sensing application the robotic vehicle travels at about constant
+horizontal speed of $0.7$m/s and the sensor actuator can achieve a maximum
+vertical speed of
+$0.1$m/s, therefore, if $dx$ and $dy$ are the horizontal and vertical
+distances between two nodes, we place an edge between the nodes only if
+$dx/dy \geq 7$ (see \figref{fig:graph}).
+For simplicity we assume that the sensor can travel across the length
+of the transect an indefinite amount of times, but is not allowed to
+change its horizontal travel direction unless it reaches the end of the
+transect.
+Furthermore, we assume that during the traversal of an edge the sensor
+obtains $n_e$ measurements equally spaced in time.
+
+We now come to the issue of computing an appropriate path through the graph. 
+%\setlength\figureheight{1.5in}\setlength\figurewidth{5.2in}
+%\input{figures/ch03/graph.tex} \renewcommand\trimlen{0pt}
+\begin{figure}[tb]
+  \begin{subfigure}[b]{0.99\linewidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/graph}
+    \caption{Path planning graph}
+    \label{fig:graph}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppbatch60_2}
+    \caption{TSP path}
+    \label{fig:limno_bgape_ppbatch3}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\linewidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppbatch60_3}
+    \caption{After current batch}
+    \label{fig:limno_bgape_ppbatch4}
+  \end{subfigure}
+  \caption{
+      Path planning with \bacl using $\epsilon = 0.7$ on a regular grid of
+      $100\times 100$ points sampled from the inferred algae concentration
+      GP of \figref{fig:limno_bgape}. Regions of already classified points
+      are shown in orange ($H_t$) and blue ($L_t$), regions of yet unclassified
+      points ($U_t$) in black, and observed points
+      ($\{\*x_i\}_{1\leq i\leq t}$) as white marks.
+      \textbf{(a)} The current position, i.e. the last point of the previous
+                   batch shown as a white circle.
+      \textbf{(b)} The current batch of $B=30$ points shown as red circles.
+      \textbf{(c)} TSP path connecting the points of the current batch with
+                   the current position using a TSP path.
+      \textbf{(d)} The situation after sampling along the TSP path.
+  }
+  \label{fig:limno_bgape_ppbatch}
+\end{figure}
