@@ -266,9 +266,10 @@ The batch extension of \iacl works in a completely analogous way.
 \begin{algorithm}[tb]
   \caption{The \bacl extension}
   \label{alg:bacl}
+\small{
 \begin{algorithmic}[1]
   \REQUIRE sample set $D$, GP prior ($\mu_0 = 0$, $k$, $\sigma_0$),\\
-           \hspace{1.6em}threshold value $h$, accuracy parameter $\epsilon$
+           \hspace{1.35em}threshold value $h$, accuracy parameter $\epsilon$
   \ENSURE predicted sets $\hat{H}$, $\hat{L}$
   \STATE $H_0 \gets \varnothing$,\enskip $L_0 \gets \varnothing$,\enskip $U_0 \gets D$ \label{lin:binit1}
   %\LET{$H_0$}{$\varnothing$} \label{lin:init1}
@@ -308,6 +309,7 @@ The batch extension of \iacl works in a completely analogous way.
   \LET{$\hat{H}$}{$H_{t-1}$} \label{lin:bret1}
   \LET{$\hat{L}$}{$L_{t-1}$} \label{lin:bret2}
 \end{algorithmic}
+}
 \end{algorithm}
 
 \paragraph{Theoretical analysis}
@@ -385,9 +387,6 @@ computing appropriate sampling paths: the first is based on the batch sampling
 extension of the previous section; the second is tailored to the task of
 environmental monitoring in Lake Zurich.
 
-We define a path $\mathcal{P}$ as a vector of points in $D$ and denote by
-$\mathcal{P}[i]$ the point that is the $i$-th element of that vector.
-
 \paragraph{Batch-based path planning}
 Our first method is a straightforward application of batch point selection for
 creating sampling paths. In particular, \bacl is used to select a batch of
@@ -435,10 +434,7 @@ on the algae concentration dataset for a batch size of $B=30$.
   \caption{
       Path planning with \bacl using $\epsilon = 0.7$ on a regular grid of
       $100\times 100$ points sampled from the inferred algae concentration
-      GP of \figref{fig:limno_bgape}. Regions of already classified points
-      are shown in orange ($H_t$) and blue ($L_t$), regions of yet unclassified
-      points ($U_t$) in black, and observed points
-      ($\{\*x_i\}_{1\leq i\leq t}$) as white marks.
+      GP of \figref{fig:limno_bgape}.
       \textbf{(a)} The current position, i.e. the last point of the previous
                    batch shown as a white circle.
       \textbf{(b)} The current batch of $B=30$ points shown as red circles.
@@ -482,44 +478,159 @@ transect.
 Furthermore, we assume that during the traversal of an edge the sensor
 obtains $n_e$ measurements equally spaced in time.
 
-We now come to the issue of computing an appropriate path through the graph. 
 %\setlength\figureheight{1.5in}\setlength\figurewidth{5.2in}
-%\input{figures/ch03/graph.tex} \renewcommand\trimlen{0pt}
+%\input{figures/ch03/graph.tex}
 \begin{figure}[tb]
+  \centering
+  \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/graph}
+  \caption{An example $10\times 20$ path planning graph. Note that each node
+           is only connected to the nodes of the next column that can be
+           reached according to the physical constraints of the application
+           (e.g. edges of top left node in red).}
+  \label{fig:graph}
+\end{figure}
+
+\begin{algorithm}[tb]
+  \caption{Graph-based path planning}
+  \label{alg:ppgraph}
+\small{
+\begin{algorithmic}[1]
+  \REQUIRE graph $\mathcal{G}$, GP prior ($\mu_0 = 0$, $k$, $\sigma_0$),\\
+           \hspace{1.35em}measurements per edge $n_e$, lookahead $k$,\\
+           \hspace{1.35em}threshold value $h$, accuracy parameter $\epsilon$
+  \ENSURE predicted sets $\hat{H}$, $\hat{L}$
+  \LET{$D$}{$\bigcup_{(i,j)\in\mathcal{E}}M_{ij}$}
+  \STATE{}\COMMENT{Initialize sets and confidence regions as in \acl}
+  \LET{$Q$}{( )}
+  \LET{$s$}{$0$}
+  \LET{$t$}{$1$}
+  \WHILE{$U_{t-1} \neq \varnothing$}
+    \STATE{}\COMMENT{Classify as in \acl}
+    \LET{$P$}{$\argmax_{P\in\mathcal{P}_{k,s}} I^u(P;f\mid Q)$} \label{lin:maxmi}
+    \STATE\COMMENT{Obtain measurements at points $M_{sP[1]}$}
+    \LET{$s$}{$P[1]$}
+    \LET{$Q$}{$(Q,s)$}
+    \STATE{}\COMMENT{GP inference as in \acl}
+    \LET{$t$}{$t+1$}
+  \ENDWHILE
+\end{algorithmic}
+}
+\end{algorithm}
+
+We now come to the issue of computing an appropriate path through the graph.
+Intuitively, we would like at each step to find a path of length $k$ that
+starts from the current node and maximizes some measure of informativeness
+with respect to level set estimation. There is no straightforward way to
+extend the notion of ambiguity of \acl to a set of points, but we can instead
+use the conditional information gain of yet unclassified points as the quantity
+to be maximized.
+
+More formally, let $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ be the graph
+and $\mathcal{P}_{k,i}$ the set of all paths of length
+$k$ starting from node $i$, where we defined a path $P$ as a vector of nodes
+and $P[n]$ is the $n$-th node in the path. Also, let $M_{ij}$ be the set of
+$n_e$ points that are sampled when edge $(i, j)$ is traversed and $M_P$ be
+the set of all points that are sampled when path $P$ is traversed.
+Then, we define
+the input space in this setting as the set of all points that may be sampled
+along any edge of the graph, i.e.
+\begin{align*}
+D = \bigcup_{(i, j)\in \mathcal{E}} M_{ij}.
+\end{align*}
+We also define the conditional information gain about $f$ of a path $P$ given
+the already traversed path $Q$ as the conditional information gain of all
+points that are sampled along path $P$ given all points that have already
+been sampled along $Q$
+\begin{align*}
+I(P;f\mid Q) = I(M_P; f\mid M_Q)
+\end{align*}
+Finally, we define the conditional information gain of yet unclassified points
+as follows
+\begin{align*}
+I^u(P;f\mid Q) = I(M^u_P; f\mid M_Q),
+\end{align*}
+where $M^u_P = \{\*x\in M_P\mid \*x \notin U_t\}$ and $U_t$ denotes as in \acl
+the subset of $D$ containing all yet unclassified points at iteration $t$.
+
+\algoref{alg:ppgraph} shows a high-level overview of the path planning
+procedure. Note that at each iteration we plan for $k$ steps ahead, but
+only advance one step, i.e. traverse one edge of the graph, and then
+replan after reclassifying using the newly obtained data.
+
+The complexity of the algorithm is concentrated on the search of the path that
+maximizes the conditional information gain (\lineref{lin:maxmi}).
+In particular, the information gain is a submodular function and maximizing it
+is an NP-hard problem~\cite{krause08}, therefore we have to resort to
+approximate solutions in practice. The recursive-greedy~\cite{chekuri05}
+algorithm provides near-optimal guarantees and has been used in practice
+for offline graph-based path planning~\cite{singh09}. However, in our online
+setting, where we have to reoptimize at each iteration in real-time, the
+quasi-polynomial complexity of recursive-greedy is still prohibitively slow.
+Instead, we use an even coarser
+approximation by applying a Viterbi-style~\cite{forney73} dynamic programming
+algorithm with a complexity of $\mathcal{O}(k n_v^2)$ per path planning
+iteration, where $n_v$ is the vertical grid resolution of our graph.
+
+%\setlength\figureheight{1.2in}\setlength\figurewidth{5.2in}
+%\input{figures/ch03/limno_bgape_ppgraph_0.tex}
+%\input{figures/ch03/limno_bgape_ppgraph_1.tex}
+%\input{figures/ch03/limno_bgape_ppgraph_2.tex}
+%\input{figures/ch03/limno_bgape_ppgraph_3.tex}
+%\input{figures/ch03/limno_bgape_ppgraph_4.tex}
+\renewcommand\trimlen{0pt}
+\begin{figure}[tbp]
   \begin{subfigure}[b]{0.99\linewidth}
     \centering
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/graph}
-    \caption{Path planning graph}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppgraph_0}
+    \vspace{-18pt}
+    \caption{$t = 0$}
     \label{fig:graph}
   \end{subfigure}
 
-  \begin{subfigure}[b]{0.49\linewidth}
+  \begin{subfigure}[b]{0.99\linewidth}
     \centering
-    \vspace{12pt} % space of this row from above captions
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppbatch60_2}
-    \caption{TSP path}
-    \label{fig:limno_bgape_ppbatch3}
+    \vspace{8pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppgraph_1}
+    \vspace{-18pt}
+    \caption{$t = 4$}
+    \label{fig:graph}
   \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.49\linewidth}
+  
+  \begin{subfigure}[b]{0.99\linewidth}
     \centering
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppbatch60_3}
-    \caption{After current batch}
-    \label{fig:limno_bgape_ppbatch4}
+    \vspace{8pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppgraph_2}
+    \vspace{-18pt}
+    \caption{$t = 10$}
+    \label{fig:graph}
   \end{subfigure}
+  
+  \begin{subfigure}[b]{0.99\linewidth}
+    \centering
+    \vspace{8pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppgraph_3}
+    \vspace{-18pt}
+    \caption{$t = 14$}
+    \label{fig:graph}
+  \end{subfigure}
+  
+  \begin{subfigure}[b]{0.99\linewidth}
+    \centering
+    \vspace{8pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch03/limno_bgape_ppgraph_4}
+    \vspace{-18pt}
+    \caption{$t = 28$}
+    \label{fig:graph}
+  \end{subfigure}
+  
   \caption{
-      Path planning with \bacl using $\epsilon = 0.7$ on a regular grid of
-      $100\times 100$ points sampled from the inferred algae concentration
-      GP of \figref{fig:limno_bgape}. Regions of already classified points
-      are shown in orange ($H_t$) and blue ($L_t$), regions of yet unclassified
-      points ($U_t$) in black, and observed points
-      ($\{\*x_i\}_{1\leq i\leq t}$) as white marks.
-      \textbf{(a)} The current position, i.e. the last point of the previous
-                   batch shown as a white circle.
-      \textbf{(b)} The current batch of $B=30$ points shown as red circles.
-      \textbf{(c)} TSP path connecting the points of the current batch with
-                   the current position using a TSP path.
-      \textbf{(d)} The situation after sampling along the TSP path.
+    Path planning with the graph-based algorithm
+    on the the inferred algae concentration GP of \figref{fig:limno_bgape}
+    using a $20\times 15$ graph, $\epsilon = 0.1$, $k = 10$, and $n_e=10$.
+    Rather than running the algorithm until every point has been classified,
+    we only run it for two traversals of the transect.
+    Note how the predicted path (red line) gets adjusted as newer
+    measurements become available.
   }
   \label{fig:limno_bgape_ppbatch}
 \end{figure}
