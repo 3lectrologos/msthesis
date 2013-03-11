@@ -11,9 +11,9 @@ Moreover, evaluating the function is usually a costly
 procedure and the measurements returned are noisy.
 
 As a concrete example of such an application, consider the task of
-monitoring a lake environment for algal bloom, a phenomenon that is
-potentially harmful to other organisms of the ecosystem. One way to
-accomplish this, is by
+monitoring a lake environment (in our case Lake Zurich) for algal bloom,
+a phenomenon that is potentially harmful to other organisms of the ecosystem.
+One way to accomplish this is by
 determining the regions of the lake where the levels of algae-produced
 chlorophyll (see \figref{fig:limno_chl}) and
 algae (see \figref{fig:limno_bgape}) concentration lie above some threshold
@@ -26,25 +26,29 @@ reduce the total number of measurements required.
 
 %\setlength\figureheight{1.5in}\setlength\figurewidth{3.5in}
 %\input{figures/ch01/limno_chl_fp.tex}
-\begin{figure}[b]
-  \centering
-  \adjincludegraphics[width=4in,clip,trim=1pt 1pt 1pt 1pt]{figures/ch01/limno_chl_fp}
-  \caption{Chlorophyll concentration in relative fluorescence units (RFU)
+%\input{figures/ch01/limno_chl_res.tex}
+\renewcommand\trimlen{0pt}
+\begin{figure}[tb]
+  \begin{subfigure}[b]{\linewidth}
+    \centering
+    \adjincludegraphics[width=0.8\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch01/limno_chl_fp}
+    \caption{Ground truth}
+    \label{fig:limno_chl}
+  \end{subfigure}
+  \begin{subfigure}[b]{\linewidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    \hspace{-2.3em}
+    \adjincludegraphics[width=0.735\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch01/limno_chl_res}
+    \caption{Estimated level set}
+    \label{fig:limno_chl_res}
+  \end{subfigure}
+  \caption{\textbf{(a)} Chlorophyll concentration in relative fluorescence units (RFU)
            inferred from $2024$ measurements within a vertical transect plane
-           of Lake Zurich (target level set at $h = 1.3$ RFU shown dashed).}
-  \label{fig:limno_chl}
-\end{figure}
-
-%\setlength\figureheight{1.5in}\setlength\figurewidth{3.5in}
-%\input{figures/ch01/limno_bgape_fp.tex}
-\begin{figure}[t]
-  \centering
-  \hspace{-0.7em}
-  \adjincludegraphics[width=4in,clip,trim=1pt 1pt 1pt 1pt]{figures/ch01/limno_bgape_fp}
-  \caption{Algae concentration in relative fluorescence units (RFU)
-           inferred from $2024$ measurements within a vertical transect plane
-           of Lake Zurich (target level set at $h = 7$ RFU shown dashed).}
-  \label{fig:limno_bgape}
+           of Lake Zurich (target level set at $h = 1.3$ RFU shown dashed).
+           \textbf{(b)} Estimated classification into superlevel (orange) and
+           sublevel (blue) sets after $405$ samples using our proposed \acl algorithm.}
+  \label{fig:limno_chl_all}
 \end{figure}
 
 Other example applications in the context of environmental
@@ -62,20 +66,78 @@ in a sequential decision setting, where, at each time step, the
 next sampling location is to be selected given all previous measurements.
 For solving this problem, we propose the \fullacl (\acl) algorithm,
 which utilizes Gaussian processes~\cite{rasmussen06} to model the target
-function and exploits its inferred confidence bounds to drive the selection
-process.
+function and exploits inferred variance estimates to create confidence bounds
+and drive the selection process.
 We also provide an information-theoretic bound
 on the number of measurements needed to achieve a certain accuracy,
-when the underlying function is sampled from a Gaussian process.
+when the underlying function is sampled from a known Gaussian process.
+
+\figref{fig:limno_chl_res} shows the estimated super- and sublevel sets
+resulting from running \acl on the chlorophyll concentration dataset of
+\figref{fig:limno_chl}. Intuitively, \acl works by progressively classifying
+points into the super- and sublevel sets and, at the same time, sampling
+at regions of high ``ambiguity'', i.e. regions where there is high
+uncertainty about whether the value of the function lies above or below
+the specified threshold level. As a consequence, the vast majority of
+the sampled locations are concentrated near the level set to be estimated,
+as is clearly shown in the above figure.
 
 Furthermore, we extend the \acl algorithm to two more settings that
 naturally arise in practical applications.
 In the first setting, we do not a priori have a specific threshold level
 at our disposal, but would still like to perform level set estimation with
 respect to an \emph{implicit} level that is expressed as a percentage
-of the function maximum.
-In the second setting, we want to select at each step a \emph{batch} of next
-samples. A reason for doing so is that,
+of the function maximum. In the environmental monitoring application outlined
+above, we might want to estimate regions of relatively high algae
+concentration, where what is considered as ``high'' concentration might
+depend on the season of the year or other environmental factors. Using
+an implicit threshold level gives us a way to obtain useful information
+without the need to hardcode a prespecified threshold level of interest
+into the algorithm.
+
+\figref{fig:limno_bgape_res} shows the estimated super- and sublevel sets
+resulting from running \acl on the chlorophyll concentration dataset of
+\figref{fig:limno_bgape} using an implicit threshold level of $75\%$ of
+the maximum. While the element of gradual classification of the explicit
+threshold algorithm is also present in the implicit version, there is an
+additional
+complexity of estimating the function maximum, in order to obtain accurate
+estimates of the implicit level. Therefore, while the algorithm still
+focuses on the ``ambiguous'' regions of the input space, at the same time
+it also heavily samples near the regions of the function maxima.
+
+%\setlength\figureheight{1.5in}\setlength\figurewidth{3.5in}
+%\input{figures/ch01/limno_bgape_fp.tex}
+%\input{figures/ch01/limno_bgape_res.tex}
+\renewcommand\trimlen{0pt}
+\begin{figure}[tb]
+  \begin{subfigure}[b]{\linewidth}
+    \centering
+    \adjincludegraphics[width=0.8\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch01/limno_bgape_fp}
+    \caption{Ground truth}
+    \label{fig:limno_bgape}
+  \end{subfigure}
+  \begin{subfigure}[b]{\linewidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    \hspace{-1.7em}
+    \adjincludegraphics[width=0.75\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch01/limno_bgape_res}
+    \caption{Estimated level set}
+    \label{fig:limno_bgape_res}
+  \end{subfigure}
+  \caption{\textbf{(a)} Algae concentration in relative fluorescence units (RFU)
+           inferred from $2024$ measurements within a vertical transect plane
+           of Lake Zurich (target level set at $h = 0.75\max f(\*x) = 7$ RFU shown
+           dashed).
+           \textbf{(b)} Estimated classification into superlevel (orange) and
+           sublevel (blue) sets after $405$ samples using the implicit version
+           of the \acl algorithm.}
+  \label{fig:limno_bgape_all}
+\end{figure}
+
+The second extension applies to both the explicit and implicit versions of
+the algorithm and aims at selecting at each step a \emph{batch} of next
+samples, rather than just one sample at a time. A reason for doing so is that,
 in problems such as the lake sensing example outlined above,
 apart from the cost of actually taking each measurement, we
 also have to take into account the cost incurred by traveling from one
@@ -95,7 +157,7 @@ The main contributions of this thesis can be summarized as follows:
       for this problem.
 \item We prove theoretical convergence bounds for \acl and its two
       extensions when the target function is sampled from a known GP.
-\item We evaluate \acl and its extensions on two real-world datasets and show
+\item We evaluate \acl and its extensions on three real-world datasets and show
       that they are competitive with the state-of-the-art.
 \end{itemize}
 
