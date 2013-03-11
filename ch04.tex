@@ -88,9 +88,9 @@ $h = 7$ RFU for the algae concentration dataset. For the implicit threshold
 experiments, we chose the values of $\omega$ so that the resulting implicit
 levels are identical to the explicit ones, which enables us to compare the two
 settings on equal ground.
-The effect of batch sampling on the required traveling distance was evaluated
-using an approximate Euclidean TSP solver to create paths connecting each
-batch of samples selected by \bacl, as described in \sectref{sect:pp}.
+%The effect of batch sampling on the required traveling distance was evaluated
+%using an approximate Euclidean TSP solver to create paths connecting each
+%batch of samples selected by \bacl, as described in \sectref{sect:pp}.
 
 \paragraph{Evaluation methodology}
 We assess the classification accuracy for all algorithms using the $F_1$-score,
@@ -217,7 +217,10 @@ between $1\%$ and $20\%$ of the respective threshold level).
   \label{fig:exp}
 \end{figure*}
 
-%\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+%\input{figures/ev_ping_rule.tex}
+%\input{figures/ev_chl_rule.tex}
+%\input{figures/ev_bgape_rule.tex}
 %\input{figures/ev_ping_rule2.tex}
 %\input{figures/ev_chl_rule2.tex}
 %\input{figures/ev_bgape_rule2.tex}
@@ -225,7 +228,7 @@ between $1\%$ and $20\%$ of the respective threshold level).
 \begin{figure*}[tb]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_rule2}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_rule}
     \caption{\textsf{[N]} Mean performance}
 	  \label{fig:ping-rule}
   \end{subfigure}
@@ -240,7 +243,7 @@ between $1\%$ and $20\%$ of the respective threshold level).
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \vspace{12pt} % space of this row from above captions
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_rule2}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_rule}
     \caption{\textsf{[A]} Mean performance}
 	  \label{fig:chl-rule}
   \end{subfigure}
@@ -255,7 +258,7 @@ between $1\%$ and $20\%$ of the respective threshold level).
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \vspace{12pt} % space of this row from above captions
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_rule2}
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_rule}
     \caption{\textsf{[A]} Means}
 	  \label{fig:bgape-rule}
   \end{subfigure}
@@ -319,75 +322,6 @@ between $1\%$ and $20\%$ of the respective threshold level).
            but significantly better than that of the naive \rstr algorithm.
            \textbf{(d)} The redundant sampling behavior of \rstr resulting
            from not using up-to-date variance estimates.
-           }
-  \label{fig:exp}
-\end{figure*}
-
-%\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
-%\input{figures/ev_chl_imp.tex}
-%\input{figures/ev_bgape_imp.tex}
-%\input{figures/ev_bgape_imp_istr_sc.tex}
-%\input{figures/ev_bgape_imp_iacl_sc.tex}
-%\input{figures/ev_bgape_imp_istr_h.tex}
-%\input{figures/ev_bgape_imp_iacl_h.tex}
-\renewcommand\trimlen{2pt}
-\begin{figure*}[tb]
-  \begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_imp}
-    \caption{\textsf{[C]} Mean performance}
-	  \label{fig:chl-imp}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp}
-    \caption{\textsf{[A]} Mean performance}
-	\label{fig:bgape-imp}
-  \end{subfigure}
-
-  \begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    \vspace{12pt} % space of this row from above captions
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_istr_sc}
-    \caption{\textsf{[A]} \istr scatter}
-	  \label{fig:bgape-imp-istr-sc}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_iacl_sc}
-    \caption{\textsf{[A]} \iacl scatter}
-	\label{fig:bgape-imp-iacl-sc}
-  \end{subfigure}
-
-  \begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    \vspace{12pt} % space of this row from above captions
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_istr_h}
-    \caption{\textsf{[A]} \istr threshold level estimate}
-	  \label{fig:bgape-imp-istr-h}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_iacl_h}
-    \caption{\textsf{[A]} \iacl threshold level estimates}
-	\label{fig:bgape-imp-iacl-h}
-  \end{subfigure}
-
-  \caption{Performance of implicit threshold algorithms on the environmental
-           monitoring datasets.
-           \textbf{(a), (b)} \iacl and \ibacl perform somewhat worse than their
-           explicit threshold counterparts, while \istr performs notably worse.
-           \textbf{(c)} Most of \istr executions fail to achieve high
-           $F_1$-scores and top off at about $0.8$.
-           \textbf{(d)} \iacl always achieves an $F_1$-score of at least $0.9$
-           after $400$ iterations.
-           \textbf{(e)} \istr's implicit threshold level estimate is lower than
-           the true level and becomes worse over time.
-           \textbf{(f)} \iacl's implicit threshold level estimates correctly bound
-           the true level and converge towards it over time.
            }
   \label{fig:exp}
 \end{figure*}
@@ -473,6 +407,75 @@ higher throughput). On the other hand, as expected, the \rstr algorithm
 performs significantly worse than the other two batch algorithms, since it
 selects a lot of redundant samples in areas of high straddle score, as depicted
 in \figref{fig:bgape-rstr-class} (cf. \sectref{sect:bacl}).
+
+\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+%\input{figures/ev_chl_imp.tex}
+%\input{figures/ev_bgape_imp.tex}
+%\input{figures/ev_bgape_imp_istr_sc.tex}
+%\input{figures/ev_bgape_imp_iacl_sc.tex}
+%\input{figures/ev_bgape_imp_istr_h.tex}
+%\input{figures/ev_bgape_imp_iacl_h.tex}
+\renewcommand\trimlen{2pt}
+\begin{figure*}[tb]
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_imp}
+    \caption{\textsf{[C]} Mean performance}
+	  \label{fig:chl-imp}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp}
+    \caption{\textsf{[A]} Mean performance}
+	\label{fig:bgape-imp}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_istr_sc}
+    \caption{\textsf{[A]} \istr scatter}
+	  \label{fig:bgape-imp-istr-sc}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_iacl_sc}
+    \caption{\textsf{[A]} \iacl scatter}
+	\label{fig:bgape-imp-iacl-sc}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_istr_h}
+    \caption{\textsf{[A]} \istr threshold level estimate}
+	  \label{fig:bgape-imp-istr-h}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_iacl_h}
+    \caption{\textsf{[A]} \iacl threshold level estimates}
+	\label{fig:bgape-imp-iacl-h}
+  \end{subfigure}
+
+  \caption{Performance of implicit threshold algorithms on the environmental
+           monitoring datasets.
+           \textbf{(a), (b)} \iacl and \ibacl perform somewhat worse than their
+           explicit threshold counterparts, while \istr performs notably worse.
+           \textbf{(c)} Most of \istr executions fail to achieve high
+           $F_1$-scores and top off at about $0.8$.
+           \textbf{(d)} \iacl always achieves an $F_1$-score of at least $0.9$
+           after $400$ iterations.
+           \textbf{(e)} \istr's implicit threshold level estimate is lower than
+           the true level and becomes worse over time.
+           \textbf{(f)} \iacl's implicit threshold level estimates correctly bound
+           the true level and converge towards it over time.
+           }
+  \label{fig:exp}
+\end{figure*}
 
 \section{Results II:\hspace{0.33em}Implicit threshold level}
 In \figsref{fig:chl-imp} and~\ref{fig:bgape-imp} we present the results of
