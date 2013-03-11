@@ -408,7 +408,7 @@ performs significantly worse than the other two batch algorithms, since it
 selects a lot of redundant samples in areas of high straddle score, as depicted
 in \figref{fig:bgape-rstr-class} (cf. \sectref{sect:bacl}).
 
-\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+%\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
 %\input{figures/ev_chl_imp.tex}
 %\input{figures/ev_bgape_imp.tex}
 %\input{figures/ev_bgape_imp_istr_sc.tex}
@@ -491,12 +491,17 @@ More importantly, the naive \istr algorithm
 fails to achieve high accuracy, as it mostly infers wrong estimates of
 the function maximum and never recovers, since the (modified) straddle rule
 gives no incentive for sampling near the maximum.
-As can be seen in \figref{fig:bgape-imp-istr-sc}, this leads to most
-of the executions of \istr achieving an $F_1$-score of only about
-0.8. The inability of \istr to recover from a wrong
+This is not very clear in the case of the chlorophyll dataset, because
+the function is fairly smooth in the vicinity of its maxima and, thus,
+\istr is able to obtain a rather accurate estimate of the function
+maximum.
+However, in the case of the algae dataset,
+as can be seen in \figref{fig:bgape-imp-istr-sc}, most
+of the executions of \istr achieve an $F_1$-score of only about
+0.8, even after $400$ samples. The inability of \istr to recover from a wrong
 threshold estimate is illustrated by the fact that most of these executions
 have already achieved this $F_1$-score after less than $100$ samples, but show
-no tendency of improvement thereafter. The behavior of \iacl depicted in
+no tendency for improvement thereafter. The behavior of \iacl depicted in
 more detail in \figref{fig:bgape-imp-istr-sc} is very different
 in that it starts considerably slower, but always achieves $F_1$-scores of
 at least $0.9$ after $400$ samples.
