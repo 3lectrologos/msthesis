@@ -1,36 +1,70 @@
 \chapter{Related work} \label{ch:related}
-Previous work on level set~\cite{dantu07,srinivasan08} and
-boundary~\cite{singh06} estimation and tracking in the context of mobile
-sensor networks has primarily focused on controlling the movement and
+As mentioned before, our work falls under the area of active learning.
+Traditional ``passive'' supervised learning is generally concerned with
+choosing a hypothesis (e.g. a classifier) from a set of available hypotheses,
+given a set of labeled instances. In many practical applications, obtaining
+instance labels is costly and, therefore, we would like to come up
+with an interactive procedure that at the same time as evaluating the
+candidate hypotheses also selects instances to be labeled. The hope is that
+focusing the labeling effort on ``informative'' instances will in the end
+significantly reduce the total sampling cost, i.e. the number of instances
+required to estimate an accurate solution of the problem at hand.
+
+The particular setting that we consider for performing level set estimation
+is known as \emph{pool-based active learning}~\cite{settles12}. In this
+setting, we are given a fixed set (pool) of unlabeled instances and at each
+iteration the algorithm has to select the next instance to be labeled,
+while given access to the whole set (e.g. for evaluating some informativeness
+measure on each element).
+
+For estimating level sets in this setting, \citet{bryan05} have proposed the
+\emph{straddle} heuristic, which selects where to sample by trading off
+uncertainty and proximity to the desired threshold level. Similar to our
+proposed algorithm they also use GPs to model the underlying function and
+obtain uncertainty estimates through the inferred variance. We also show
+in \chapref{ch:acl} that our proposed ambiguity-based selection rule
+bears a close similarity to the straddle score. However, as we will also see,
+our algorithm's behavior is primarily dictated by its classification rules
+and, thus, does not experience the limited exploration from which straddle
+seems to suffer in some cases (see \chapref{ch:exp}).
+Furthermore, no theoretical justification has been given for the use of
+straddle, neither for its extension to composite functions~\cite{bryan08}.
+
+\citet{garnett12} consider the problem of
+\emph{active search}, which is also about sequential sampling from a domain of
+two (or more) classes. In our case the classes would be the super- and sublevel
+sets with respect to the desired threshold level.
+In contrast to our goal of detecting the class boundaries (i.e. level set),
+however, their goal is to sample as many points as possible from one of the
+classes. The difference between our level set estimation setting and the above
+active search problem resembles the more fundamental difference between active
+learning and
+\emph{online learning}~\cite{shalev12}, where the former aims to obtain
+an accurate model after a number of sampling steps, while the latter aims
+to make accurate predictions during the sampling process.
+
+In the context of mobile sensor networks, previous work on level
+set~\cite{dantu07,srinivasan08} and boundary~\cite{singh06} estimation and
+tracking has primarily focused on controlling the movement and
 communication of sensor nodes, without giving much attention to
 individual sampling locations and the choice thereof.
 
-In contrast, we consider the problem of level set estimation in the setting of
-\emph{pool-based active learning}~\cite{settles09}, where we need to make
-sequential decisions by choosing sampling locations from a given set.
-For this problem, \citet{bryan05} have proposed the
-\emph{straddle} heuristic, which selects where to sample by trading off
-uncertainty and proximity to the desired threshold level, both estimated
-using GPs.
-However, no theoretical justification has been given for the use of straddle,
-neither for its extension to composite functions~\cite{bryan08}.
-\citet{garnett12} consider the problem of
-\emph{active search}, which is also about sequential sampling from a domain of
-two (or more) classes (in our case the super- and sublevel sets).
-In contrast to our goal of detecting the class boundaries, however,
-their goal is to sample as many points as possible from one of the classes.
-
-In the setting of multi-armed bandit optimization, which is similar to ours
-in terms of sequential sampling, but different in terms of objectives,
+A similar setting to ours in terms of sequential sampling, but different
+in terms of objectives, is that of \emph{multi-armed bandit optimization}.
+The target there is to estimate the maximum of an underlying function
+by again choosing to label (evaluate) one of the bandit arms (sampling
+locations) at each time step. For this problem,
 GPs have been used both for modeling, as well as for sample
 selection~\mbox{\cite{brochu10}}. In particular, the \gpucb algorithm
-makes use of GP-inferred upper confidence bounds for selecting samples and
-has been shown to achieve sublinear regret~\cite{srinivas10}.
-An extension of \gpucb to the multi-objective
-optimization problem has been proposed by
-\citet{zuluaga13}, who use a similar GP-based
-classification scheme to ours to classify points as being Pareto-optimal
-or not.
+utilizes the GP-inferred mean and variance estimates to construct upper
+confidence bounds for each arm and use them for driving the selection
+process. Using an information-theoretic approach, parts of which we use
+in the analysis of our proposed algorithms, \gpucb has been shown
+to achieve sublinear regret~\cite{srinivas10}.
+An extension of \gpucb to the multi-objective optimization problem has
+been proposed by \citet{zuluaga13}, who also use a similar to ours GP-based
+classification scheme to gradually classify points as being
+Pareto-optimal or not.
 
 Existing approaches for performing multiple evaluations in
 parallel in the context of GP optimization, include

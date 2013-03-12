@@ -62,9 +62,12 @@ the subset of a
 parameter space that represents ``acceptable'' hypotheses~\cite{bryan05} or
 designs~\cite{ramakrishnan05}.
 
-We consider the problem of estimating some function level set
-in a sequential decision setting, where, at each time step, the
-next sampling location is to be selected given all previous measurements.
+We pose the problem of estimating some function level set as a
+classification problem to be solved using \emph{active learning}.
+In particular, we study the problem of classifying points into
+a super- and a sublevel set with respect to some given threshold level
+by making sequential decisions of the next sampling location at each
+time step given all previous measurements.
 For solving this problem, we propose the \fullacl (\acl) algorithm,
 which utilizes Gaussian processes~\cite{rasmussen06} to model the target
 function and exploits inferred variance estimates to create confidence bounds
