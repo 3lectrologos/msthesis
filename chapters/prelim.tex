@@ -1,0 +1,67 @@
+\chapter{Preliminaries} \label{ch:prelim}
+
+\paragraph{Formal problem statement}
+Given a function ${f : D \to \mathbb{R}}$, where $D$ is a
+finite\footnote{The subsequent analysis only considers the finite domain case
+for simplicity, however our results can be generalized to continuous spaces
+as well \citep[cf.][]{srinivas10}.}
+subset of $\mathbb{R}^d$, and a threshold level ${h \in \mathbb{R}}$,
+we define the \emph{level set estimation problem} as the problem of classifying
+every point $\*x \in D$ into a \emph{superlevel set}
+${H = \{\*x \in D \mid f(\*x) > h\}}$ and a \emph{sublevel set}
+${L = \{\*x \in D \mid f(\*x) \leq h\}}$.
+
+When an explicit level is not available, we can define an
+\emph{implicit threshold level}
+with respect to the function maximum in either absolute or relative terms.
+We use the relative definition in our exposition with
+${h = \omega \max_{\*x\in D} f(\*x)}$
+and $\omega \in (0, 1)$.
+
+In the \emph{strictly sequential} setting,
+at each step $t \geq 1$, we select a point $\*x_t \in D$ to be evaluated and
+obtain a noisy measurement $y_t = f(\*x_t) + n_t$.
+In the \emph{batch} setting we select $B$ points at a time and only obtain
+the resulting measurements after all of the $B$ points have been selected.
+This setting can be generalized by using the notion of a
+\emph{feedback function} introduced by \citet{desautels12}.
+In particular, we assume that there is a function
+${\fb : \mathbb{N} \to \mathbb{N}\cup\{0\}}$, such that
+$\fb[t] \leq t-1$ for all $t \geq 1$, and when selecting the next point
+at time step $t$, we have access to evaluated measurements up to
+time step $\fb[t]$. For selecting batches of size $B$ we can define
+$\fb[1] = \ldots = \fb[B] = 0$,\enskip$\fb[B+1] = \ldots = \fb[2B] = B$,
+and so on,
+but the feedback function also allows for defining more complex cases
+of delayed feedback.
+
+\paragraph{Gaussian processes}
+\looseness -1 Without any assumptions about the function $f$, attempting to estimate level sets from few samples is a hopeless endeavor.
+%theoretically analyze our algorithms, we have to make some assumptions about the underlying function $f$.
+Modeling $f$ as a sample from a Gaussian process
+(GP) provides an elegant way for specifying properties of the function in a
+nonparametric fashion. A GP is defined as a collection of random variables,
+any finite subset of which is distributed according to a
+multivariate Gaussian in a consistent way~\cite{rasmussen06}. A GP is
+denoted as $\mathcal{GP}(\mu(\*x), k(\*x, \*x'))$ and is
+completely specified by its mean function $\mu(\*x)$, which can be
+assumed to be zero w.l.o.g., and its covariance function or kernel
+$k(\*x, \*x')$, which encodes smoothness properties of functions sampled
+from the GP.
+
+Assuming a GP prior $\mathcal{GP}(0, k(\*x, \*x'))$ over $f$ and given
+$t$ noisy measurements $\*y_t = [y_1,\ldots,y_t]^T$ for
+points in $A_t = \{x_1,\ldots,x_t\}$,
+where $y_i = f(\*x_i) + n_i$ and
+${n_i \sim \mathcal{N}(0, \sigma^2)}$ (Gaussian i.i.d. noise)
+for $i = 1,\ldots,t$, the posterior over $f$ is also a
+GP and its mean, covariance, and variance functions are given by the
+following analytic formulae:
+\begin{align}
+\mu_t(\*x) &= \*k_t(\*x)^T\left(\*K_t + \sigma^2 \*I\right)^{-1}\*y_t\label{eq:mean}\\
+k_t(\*x, \*x') &= k(\*x, \*x') - \*k_t(\*x)^T\left(\*K_t + \sigma^2 \*I\right)^{-1}\*k_t(\*x)\notag\\
+\sigma_t^2(\*x) &= k_t(\*x, \*x)\label{eq:var},
+\end{align}
+where $\*k_t(\*x) = [k(\*x_1, \*x),\ldots,k(\*x_t, \*x)]^T$ and $\*K_t$ is
+the kernel matrix of already observed points, defined as
+${\*K_t = [k(\*x, \*x')]_{\*x, \*x'\in\*A_t}}$.

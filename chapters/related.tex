@@ -1,0 +1,43 @@
+\chapter{Related work} \label{ch:related}
+Previous work on level set~\cite{dantu07,srinivasan08} and
+boundary~\cite{singh06} estimation and tracking in the context of mobile
+sensor networks has primarily focused on controlling the movement and
+communication of sensor nodes, without giving much attention to
+individual sampling locations and the choice thereof.
+
+In contrast, we consider the problem of level set estimation in the setting of
+\emph{pool-based active learning}~\cite{settles09}, where we need to make
+sequential decisions by choosing sampling locations from a given set.
+For this problem, \citet{bryan05} have proposed the
+\emph{straddle} heuristic, which selects where to sample by trading off
+uncertainty and proximity to the desired threshold level, both estimated
+using GPs.
+However, no theoretical justification has been given for the use of straddle,
+neither for its extension to composite functions~\cite{bryan08}.
+\citet{garnett12} consider the problem of
+\emph{active search}, which is also about sequential sampling from a domain of
+two (or more) classes (in our case the super- and sublevel sets).
+In contrast to our goal of detecting the class boundaries, however,
+their goal is to sample as many points as possible from one of the classes.
+
+In the setting of multi-armed bandit optimization, which is similar to ours
+in terms of sequential sampling, but different in terms of objectives,
+GPs have been used both for modeling, as well as for sample
+selection~\mbox{\cite{brochu10}}. In particular, the \gpucb algorithm
+makes use of GP-inferred upper confidence bounds for selecting samples and
+has been shown to achieve sublinear regret~\cite{srinivas10}.
+An extension of \gpucb to the multi-objective
+optimization problem has been proposed by
+\citet{zuluaga13}, who use a similar GP-based
+classification scheme to ours to classify points as being Pareto-optimal
+or not.
+
+Existing approaches for performing multiple evaluations in
+parallel in the context of GP optimization, include
+\emph{simulation matching}~\cite{azimi10}, which combines GP modeling with
+Monte-Carlo simulations, and the \gpbucb~\cite{desautels12} algorithm,
+which obtains similar regret bounds to \gpucb, and from which we borrow
+the main idea for performing batch sample selection.
+
+To our knowledge, there has been no previous work on actively estimating
+level sets with respect to implicitly defined threshold levels.
