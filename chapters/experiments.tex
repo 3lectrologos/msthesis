@@ -518,6 +518,14 @@ from above and below respectively and get more accurate over time
 and~\lemmasref{lem:hopt}--\ref{lem:hpes}),
 thus allowing for better classification results.
 
+Our \iacl simulations have shown that, as one might expect, the sooner
+the maximum of the function is accurately estimated the faster the
+algorithm converges to an accurate classification. Some preliminary
+experimentation with simple heuristics, such as sampling according
+to the \gpucb rule every $k_t$ steps (with $k_t$ starting small and
+increasing with time), leads to improved overall sampling costs and
+would be an interesting direction to explore theoretically.
+
 %\section{Results III:\hspace{0.33em}Path planning}
 %Finally, \figref{fig:chl-tsp} displays the dramatically lower required travel
 %length by using batches of samples for path planning: to achieve

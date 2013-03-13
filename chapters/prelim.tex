@@ -50,7 +50,7 @@ $k(\*x, \*x')$, which encodes smoothness properties of functions sampled
 from the GP.
 
 Assuming a GP prior $\mathcal{GP}(0, k(\*x, \*x'))$ over $f$ and given
-$t$ noisy measurements $\*y_t = [y_1,\ldots,y_t]^T$ for
+$t$ noisy measurements $\*y_{1:t} = [y_1,\ldots,y_t]^T$ for
 points in $A_t = \{x_1,\ldots,x_t\}$,
 where $y_i = f(\*x_i) + n_i$ and
 ${n_i \sim \mathcal{N}(0, \sigma^2)}$ (Gaussian i.i.d. noise)
@@ -64,4 +64,62 @@ k_t(\*x, \*x') &= k(\*x, \*x') - \*k_t(\*x)^T\left(\*K_t + \sigma^2 \*I\right)^{
 \end{align}
 where $\*k_t(\*x) = [k(\*x_1, \*x),\ldots,k(\*x_t, \*x)]^T$ and $\*K_t$ is
 the kernel matrix of already observed points, defined as
-${\*K_t = [k(\*x, \*x')]_{\*x, \*x'\in\*A_t}}$.
+${\*K_t = [k(\*x, \*x')]_{\*x, \*x'\in A_t}}$.
+
+\paragraph{Information gain}
+The information gain about a random variable $X$ from observing a random
+variable $Y$, also known as the \emph{mutual information} of the two variables,
+is defined as~\cite{cover06}
+\begin{align*}
+I(X; Y) = H(X) - H(X\mid Y),
+\end{align*}
+where $H(X)$ is the entropy of $X$ and $H(X\mid Y)$ is the conditional
+entropy of $X$ given $Y$.
+The information gain is symmetric, i.e. $I(X; Y) = I(Y; X)$, and,
+as can be seen from the above definition, it quantifies the (average) reduction
+in our uncertainty about $X$ when observing the value of $Y$ (and vice
+versa).
+
+We will use the information gain to quantify the reduction in uncertainty
+about $f \sim \mathcal{GP}(0, k(\*x, \*x'))$ when obtaining a set of
+noisy observations $\*y_{1:t}$, which is
+\begin{align*}
+I(f; \*y_{1:t}) = I(\*y_{1:t}; f) = H(\*y_{1:t}) - H(\*y_{1:t}\mid f).
+\end{align*}
+If we define $f_i = f(\*x_i)$, from the fact that
+$\*y_{1:t} = \*f_{1:t} + \*n_{1:t}$ is a sum of Gaussians, it follows that
+$\*y_{1:t} \sim \mathcal{N}\left(0, \*K_t + \sigma^2 I\right)$ and the
+entropy of the noisy observations is
+\begin{align}\label{eq:hy}
+H(\*y_{1:t}) = \frac{1}{2}\log\left((2\pi e)^t |\*K_t + \sigma^2 I|\right).
+\end{align}
+Furthermore, note that the observations $\*y_{1:t}$ are conditionally
+independent of anything else given the underlying GP values
+of $\*f_{1:t}$ and
+$\*y_{1:t}\mid \*f_{1:t} \sim \mathcal{N}(\*f_{1:t}, \sigma^2 I)$.
+It follows that
+\begin{align}\label{eq:hyf}
+H(\*y_{1:t}\mid f) = H(\*y_{1:t}\mid \*f_{1:t}) = \frac{1}{2}\log\left((2\pi e)^t |\sigma^2 I|\right).
+\end{align}
+Combining \eqtref{eq:hy} and \eqtref{eq:hyf} we get
+\begin{align*}
+I(f; \*y_{1:t}) = \frac{1}{2}\log\left(|I + \sigma^{-2} \*K_t|\right)
+\end{align*} 
+
+The notion of information gain can be generalized to the \emph{conditional
+information gain} or \emph{conditional mutual information}, which quantifies
+the reduction in uncertainty about a variable $X$ from observing the value
+of a variable $Y$ when already given the value of variable $Z$. It is
+similarly defined as
+\begin{align*}
+I(X; Y\mid Z) = H(X\mid Z) - H(X\mid Y, Z).
+\end{align*} We will use it to quantify the reduction in uncertainty about $f$ when
+obtaining a set of additional noisy observations $\*y_A$ given that
+we already have available observations $\*y_{1:t}$, which is
+\begin{align*}
+I(f; \*y_A\mid \*y_{1:t}) &= H(\*y_A\mid \*y_{1:t}) - H(\*y_A\mid \*y_{1:t}, f)\\
+                          &= H(\*y_A\mid \*y_{1:t}) - H(\*y_A\mid f)\\
+                          &= I(f; \*y_{1:t}) = \frac{1}{2}\log\left(|I + \sigma^{-2} \*K^t_A|\right),
+\end{align*}
+using a similar derivation to above and defining
+${\*K^t_A = [k_t(\*x, \*x')]_{\*x, \*x'\in\*A}}$.
