@@ -1,1 +1,15 @@
 \chapter{Conclusion} \label{sect:conclusion}
+
+%There are a number of shortcomings when applying the above batch-based method
+%in practice. First, since selection of the batch is decoupled from its
+%evaluation, there is no way to adapt the path during sampling of the points
+%in the TSP path.\footnote{An alternative would be to each time sample the first
+%point in the TSP path and then replan using a new batch. However, this fails
+%because it does not give enough incentive to explore areas of the input space
+%that lie far away from the current position.} Second, additional samples can be obtained while traveling from one location
+%to another, but there is no easy way to incorporate this when planning using
+%batches.
+%Finally, as can be seen in the example of \figref{fig:limno_bgape_ppbatch}
+%the resulting TSP path may contain several abrupt changes of direction that
+%are not achievable in practice due to kinematic constraints of the mobile
+%sensor equipment.

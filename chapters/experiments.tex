@@ -29,6 +29,11 @@ In more detail, the algorithms and their setup are as follows.
   $\*x_t = \argmax_{\*x \in D} \sigma_{t-1}(\*x)$.
 \end{description}
 
+We implemented all algorithms in MATLAB and we used an approximate TSP
+solver based on genetic
+programming\footnote{\url{http://www.mathworks.com/matlabcentral/fileexchange/21198}}
+for the path planning evaluation.
+
 \paragraph{Dataset 1: Network latency}
 Our first dataset consists of round-trip time (RTT) measurements obtained
 by ``pinging'' $1768$ servers spread around the world (see \figref{fig:map}).
