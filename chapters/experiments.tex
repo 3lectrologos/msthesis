@@ -7,9 +7,8 @@ In more detail, the algorithms and their setup are as follows.
 \item[\acl/\iacl:] Since the bound of \theoremref{thm:acl} is fairly conservative,
   in our experiments we used a constant value of $\beta_t^{1/2} = 3$, which is
   somewhat smaller than the values suggested by the theorem.
-\item[\bacl/\ibacl:] We used $\eta_t^{1/2} = 4$ and a batch size of $B = 30$.
-  Furthermore, as proposed by \citet{desautels12}, we initialized the
-  algorithms with $T^{init} = 30$ sequentially chosen maximum variance samples.
+\item[\bacl/\ibacl:] We used somewhat larger value of $\eta_t^{1/2} = 4$ (compared
+  to $\beta_t^{1/2}=3$ of the sequential case) and a batch size of $B = 30$.
 \item[\str:] The state-of-the-art straddle heuristic,
   as proposed by \citet{bryan05}, with the selection rule
   ${\*x_t = \argmax_{\*x \in D} \left(1.96\sigma_{t-1}(\*x) - |\mu_{t-1}(\*x) - h|\right)}$.
@@ -135,7 +134,7 @@ between $1\%$ and $20\%$ of the respective threshold level).
 %\input{figures/limno_bgape_acl_class374.tex}
 %\input{figures/limno_bgape_var_class400.tex}
 \renewcommand\trimlen{2pt}
-\begin{figure*}[htbp]
+\begin{figure}[htbp]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_seq}
@@ -191,7 +190,7 @@ between $1\%$ and $20\%$ of the respective threshold level).
     \vspace{8pt} % space of this row from above captions
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq_str_sc}
     \vspace{-18pt}
-    \caption{\textsf{[A]} \str scatter}
+    \caption{\textsf{[A]} \str scatter plot}
 	  \label{fig:bgape-seq-str-sc}
   \end{subfigure}
   \hfill
@@ -199,7 +198,7 @@ between $1\%$ and $20\%$ of the respective threshold level).
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_seq_acl_sc}
     \vspace{-18pt}
-    \caption{\textsf{[A]} \acl scatter}
+    \caption{\textsf{[A]} \acl scatter plot}
 	  \label{fig:bgape-seq-acl-sc}
   \end{subfigure}
 
@@ -219,8 +218,79 @@ between $1\%$ and $20\%$ of the respective threshold level).
            executions achieve an $F_1$-score of less than $0.4$, while \acl
            always achieves an $F_1$-score of at least $0.95$.
            }
-  \label{fig:exp}
-\end{figure*}
+  \label{fig:exp-seq}
+\end{figure}
+
+\section{Results I:\hspace{0.33em}Explicit threshold level}
+
+\paragraph{Sequential sampling}
+\figsref{fig:ping-seq}--\ref{fig:bgape-seq} compare the performance of the
+strictly sequential algorithms on the three datasets.
+On the first two datasets \acl and \str are comparable in performance, with
+\acl being slightly better on the chorophyll dataset and slightly worse
+on the latency dataset. However, the situation is different in the third
+dataset, where \str performs extremely poorly. The reason is that the
+algorithm can get stuck in situations where it is favorable according to
+the straddle score to continue sampling points near the currently inferred
+level set, instead of sampling points of high variance at yet unexplored
+regions that lie far away from the currently inferred level set.
+
+\figref{fig:bgape-str-class} shows an example of such an execution, where
+\str has heavily sampled the left region of the level set, but has
+completely missed the part of the level set that lies on the right of the
+transect (cf. \figref{fig:limno_bgape}).
+In \figref{fig:bgape-seq-str-sc} we depict as a scatter plot the
+detailed results of the $50$ \str executions. Note that about a third
+of the executions do not manage to achieve an $F_1$-score of 0.4, even
+after $400$ iterations, i.e. they miss the right part of the level set
+as explained above, and another third only achieve an $F_1$-score of 0.8,
+i.e. they miss the left part of the level set.
+On the other hand, as shown in \figref{fig:bgape-seq-acl-sc}, this problem
+never occurs in \acl, because of its classification regime, which implicitly
+forces exploration by excluding points that have already been classified from
+being sampled.
+
+Although \var is commonly used for estimating functions over their entire
+domain, it is clearly outperformed in our experiments, because it does not
+sufficiently focus on accurately estimating the desired level set, but
+rather samples almost uniformly over the sample space.
+
+\paragraph{The effect of $\*\epsilon$}
+To illustrate how the choice of $\epsilon$ affects the results of \acl,
+we present in \figref{fig:exp-eps} two scatter plots, similar to the one in
+\figref{fig:bgape-seq-acl-sc}, that depict the results of running \acl
+on the two environmental monitoring datasets for different values of
+$\epsilon$. As before, each point in the plot corresponds to the result of
+one execution of \acl, but now we have colored the points according to the
+value of $\epsilon$ used in that execution. In our theoretical analysis
+we have seen that $\epsilon$ represents a tradeoff parameter between
+classification accuracy and sampling cost. The two scatter plots
+give experimental evidence that this is indeed the case and, moreover,
+that the transition when varying $\epsilon$ is fairly smooth.
+
+%\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+%\input{figures/ev_bgape_eps.tex}
+\renewcommand\trimlen{2pt}
+\begin{figure}[tbp]
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_eps}
+    \caption{\textsf{[A]} LSE scatter plot}
+	  \label{fig:chl-eps}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_eps}
+    \caption{\textsf{[C]} LSE scatter plot}
+	\label{fig:bgape-eps}
+  \end{subfigure}
+
+  \caption{The effect of $\epsilon$ on the sampling cost and classification
+           accuracy of \acl on the two environmental monitoring datasets.
+           }
+  \label{fig:exp-eps}
+\end{figure}
 
 %\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
 %\input{figures/ev_ping_rule.tex}
@@ -230,10 +300,11 @@ between $1\%$ and $20\%$ of the respective threshold level).
 %\input{figures/ev_chl_rule2.tex}
 %\input{figures/ev_bgape_rule2.tex}
 \renewcommand\trimlen{2pt}
-\begin{figure*}[tb]
+\begin{figure}[tbp]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_rule}
+    \vspace{-15pt}
     \caption{\textsf{[N]} Varying $\epsilon$}
 	  \label{fig:ping-rule}
   \end{subfigure}
@@ -241,6 +312,7 @@ between $1\%$ and $20\%$ of the respective threshold level).
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_rule2}
+    \vspace{-15pt}
     \caption{\textsf{[N]} Fixed $\epsilon$}
 	\label{fig:ping-rule2}
   \end{subfigure}
@@ -249,6 +321,7 @@ between $1\%$ and $20\%$ of the respective threshold level).
     \centering
     \vspace{12pt} % space of this row from above captions
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_rule}
+    \vspace{-15pt}
     \caption{\textsf{[C]} Varying $\epsilon$}
 	  \label{fig:chl-rule}
   \end{subfigure}
@@ -256,6 +329,7 @@ between $1\%$ and $20\%$ of the respective threshold level).
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_rule2}
+    \vspace{-15pt}
     \caption{\textsf{[C]} Fixed $\epsilon$}
 	\label{fig:chl-rule2}
   \end{subfigure}
@@ -264,6 +338,7 @@ between $1\%$ and $20\%$ of the respective threshold level).
     \centering
     \vspace{12pt} % space of this row from above captions
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_rule}
+    \vspace{-15pt}
     \caption{\textsf{[A]} Varying $\epsilon$}
 	  \label{fig:bgape-rule}
   \end{subfigure}
@@ -271,18 +346,55 @@ between $1\%$ and $20\%$ of the respective threshold level).
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_rule2}
+    \vspace{-15pt}
     \caption{\textsf{[A]} Fixed $\epsilon$}
 	\label{fig:bgape-rule2}
   \end{subfigure}
 
-  \caption{Performance of different \acl selection rules on the three datasets.
+  \caption{
+           Performance of different \acl selection rules on the three datasets.
            \textbf{(a), (c), (e)} For varying $\epsilon$ there is no notable difference
            between the three selection rules.
            \textbf{(b), (d), (f)} When using a small fixed value of $\epsilon$ and
            evaluating during each \acl execution, the maximum ambiguity
-           selection rule has an advantage over the other two rules.}
-  \label{fig:exp}
-\end{figure*}
+           selection rule has an advantage over the other two rules.
+           }
+  \label{fig:exp-rule}
+\end{figure}
+
+\paragraph{Sample selection rules}
+In \figsref{fig:ping-rule}, \ref{fig:chl-rule}, and \ref{fig:bgape-rule}
+we compare the performance
+of \acl using different sample selection rules (\lineref{lin:sel1} of
+\algoref{alg:acl}). In particular, we compare the maximum ambiguity
+rule (as presented in \acl), the maximum variance rule
+(which we use in \iacl), and the rule of randomly choosing the next
+sample from $U_t$.
+
+To further investigate the potential effect of the sampling rules, we also
+ran a different set of experiments, where, instead of varying $\epsilon$
+and evaluating the $F_1$-score after termination, we fixed $\epsilon$ to a
+small value ($h/50$) and
+evaluated the different \acl variants during their execution using the
+GP posterior mean to classify points into the super- and sublevel sets
+(as explained before for \str and \var). In other words, we evaluated the
+performance obtained when the tuning of $\epsilon$ for controlling the
+required number of samples is ignored.
+
+The results are presented in \figsref{fig:ping-rule2}, \ref{fig:chl-rule2},
+and \ref{fig:bgape-rule2}. In this case, the maximum ambiguity rule
+outperforms the other two rules on all three datasets. However, note
+that in the two environmental monitoring datasets the difference is fairly
+small and the other two rules still perform considerably better than \var.
+
+To connect the above observations with the operation of \acl, recall
+that the algorithm is largely based on the progressive classification of
+points into $H_t$ and $L_t$, a process that focuses the selection of the next
+sample at each step on a set of ``interesting'' (w.r.t. to the sought after
+level set), yet unclassified points $U_t$. The
+way in which the sample is selected from $U_t$ seems to be of secondary
+importance and selecting using maximum ambiguity might provide a small
+performance benefit.
 
 %\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
 %\input{figures/ev_ping_batch.tex}
@@ -290,7 +402,7 @@ between $1\%$ and $20\%$ of the respective threshold level).
 %\input{figures/ev_bgape_batch.tex}
 %\input{figures/limno_bgape_rstr_class400.tex}
 \renewcommand\trimlen{2pt}
-\begin{figure*}[tb]
+\begin{figure}[tb]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_ping_batch}
@@ -328,76 +440,8 @@ between $1\%$ and $20\%$ of the respective threshold level).
            \textbf{(d)} The redundant sampling behavior of \rstr resulting
            from not using up-to-date variance estimates.
            }
-  \label{fig:exp}
-\end{figure*}
-
-\section{Results I:\hspace{0.33em}Explicit threshold level}
-
-\paragraph{Sequential sampling}
-\figsref{fig:ping-seq}--\ref{fig:bgape-seq} compare the performance of the
-strictly sequential algorithms on the three datasets.
-On the first two datasets \acl and \str are comparable in performance, with
-\acl being slightly better on the chorophyll dataset and slightly worse
-on the latency dataset. However, the situation is different in the third
-dataset, where \str performs extremely poorly. The reason is that the
-algorithm can get stuck in situations where it is favorable according to
-the straddle score to continue sampling points near the currently inferred
-level set, instead of sampling points of high variance at yet unexplored
-regions that lie far away from the currently inferred level set.
-
-\figref{fig:bgape-str-class} shows an example of such an execution, where
-\str has heavily sampled the left region of the level set, but has
-completely missed the part of the level set that lies on the right of the
-transect (cf. \figref{fig:limno_bgape}).
-In \figref{fig:bgape-seq-str-sc} we depict as a scatter plot the
-detailed results of the $50$ \str executions. Note that about a third
-of the executions do not manage to achieve an $F_1$-score of 0.4, even
-after $400$ iterations, i.e. they miss the right part of the level set
-as explained above, and another third only achieve an $F_1$-score of 0.8,
-i.e. they miss the left part of the level set.
-On the other hand, as shown in \figref{fig:bgape-seq-acl-sc}, this problem
-never occurs in \acl, because of its classification regime, which implicitly
-forces exploration by excluding points that have already been classified from
-being sampled.
-
-Although \var is commonly used for estimating functions over their entire
-domain, it is clearly outperformed in our experiments, because it does not
-sufficiently focus on accurately estimating the desired level set, but
-rather samples almost uniformly over the sample space.
-
-\paragraph{Sample selection rules}
-In \figsref{fig:ping-rule}, \ref{fig:chl-rule}, and \ref{fig:bgape-rule}
-we compare the performance
-of \acl using different sample selection rules (\lineref{lin:sel1} of
-\algoref{alg:acl}). In particular, we compare the maximum ambiguity
-rule (as presented in \acl), the maximum variance rule
-(which we use in \iacl), and the rule of randomly choosing the next
-sample from $U_t$.
-
-To further investigate the potential effect of the sampling rules, we also
-ran a different set of experiments, where, instead of varying $\epsilon$
-and evaluating the $F_1$-score after termination, we fixed $\epsilon$ to a
-small value ($h/50$) and
-evaluated the different \acl variants during their execution using the
-GP posterior mean to classify points into the super- and sublevel sets
-(as explained before for \str and \var). In other words, we evaluated the
-performance obtained when the tuning of $\epsilon$ for controlling the
-required number of samples is ignored.
-
-The results are presented in \figsref{fig:ping-rule2}, \ref{fig:chl-rule2},
-and \ref{fig:bgape-rule2}. In this case, the maximum ambiguity rule
-outperforms the other two rules on all three datasets. However, note
-that in the two environmental monitoring datasets the difference is fairly
-small and the other two rules still perform considerably better than \var.
-
-To connect the above observations with the operation of \acl, recall
-that the algorithm is largely based on the progressive classification of
-points into $H_t$ and $L_t$, a process that focuses the selection of the next
-sample at each step on a set of ``interesting'' (w.r.t. to the sought after
-level set), yet unclassified points $U_t$. The
-way in which the sample is selected from $U_t$ seems to be of secondary
-importance and selecting using maximum ambiguity might provide a small
-performance benefit.
+  \label{fig:exp-batch}
+\end{figure}
 
 \paragraph{Batch sampling}
 In \figsref{fig:ping-batch}--\ref{fig:bgape-batch} we show the performance
@@ -413,6 +457,55 @@ performs significantly worse than the other two batch algorithms, since it
 selects a lot of redundant samples in areas of high straddle score, as depicted
 in \figref{fig:bgape-rstr-class} (cf. \sectref{sect:bacl}).
 
+\section{Results II:\hspace{0.33em}Implicit threshold level}
+In \figsref{fig:chl-imp} and~\ref{fig:bgape-imp} we present the results of
+executing the implicit threshold algorithms on the two
+environmental monitoring datasets. The difficulty of estimating the
+function maximum at the same time as performing classification with respect to
+the implicit threshold level is manifested in the notably larger sampling cost
+of \iacl required to achieve high accuracy compared to the explicit threshold
+experiments. As before, the batch version of
+\iacl is only slightly worse that its sequential counterpart.
+
+More importantly, the naive \istr algorithm
+fails to achieve high accuracy, as it mostly infers wrong estimates of
+the function maximum and never recovers, since the (modified) straddle rule
+gives no incentive for sampling near the maximum.
+This is not very clear in the case of the chlorophyll dataset, because
+the function is fairly smooth in the vicinity of its maxima and, thus,
+\istr is able to obtain a rather accurate estimate of the function
+maximum.
+However, in the case of the algae dataset,
+as can be seen in \figref{fig:bgape-imp-istr-sc}, most
+of the executions of \istr achieve an $F_1$-score of only about
+0.8, even after $400$ samples. The inability of \istr to recover from a wrong
+threshold estimate is illustrated by the fact that most of these executions
+have already achieved this $F_1$-score after less than $100$ samples, but show
+no tendency for improvement thereafter. The behavior of \iacl depicted in
+more detail in \figref{fig:bgape-imp-istr-sc} is very different
+in that it starts considerably slower, but always achieves $F_1$-scores of
+at least $0.9$ after $400$ samples.
+
+\figref{fig:bgape-imp-istr-h} shows the estimated implicit threshold
+level for an example execution of \istr on the algae concentration
+dataset. Note that the inferred level
+is smaller than the true level $h = 7$ and, even worse, seems to
+deviate further away from the true level over time.
+In contrast, as shown in \figref{fig:bgape-imp-iacl-h}, the optimistic
+and pessimistic estimates used by \iacl correctly bound the true level
+from above and below respectively and get more accurate over time
+(as predicted by theory; cf. \lemmaref{lem:hdif}
+and~\lemmasref{lem:hopt}--\ref{lem:hpes}),
+thus allowing for better classification results.
+
+Our \iacl simulations have shown that, as one might expect, the sooner
+the maximum of the function is accurately estimated the faster the
+algorithm converges to an accurate classification. Some preliminary
+experimentation with simple heuristics, such as sampling according
+to the \gpucb rule every $k_t$ steps (with $k_t$ starting small and
+increasing with time), leads to improved overall sampling costs and
+would be an interesting direction to explore theoretically.
+
 %\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
 %\input{figures/ev_chl_imp.tex}
 %\input{figures/ev_bgape_imp.tex}
@@ -421,7 +514,7 @@ in \figref{fig:bgape-rstr-class} (cf. \sectref{sect:bacl}).
 %\input{figures/ev_bgape_imp_istr_h.tex}
 %\input{figures/ev_bgape_imp_iacl_h.tex}
 \renewcommand\trimlen{2pt}
-\begin{figure*}[tb]
+\begin{figure}[tbp]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_imp}
@@ -479,61 +572,55 @@ in \figref{fig:bgape-rstr-class} (cf. \sectref{sect:bacl}).
            \textbf{(f)} \iacl's implicit threshold level estimates correctly bound
            the true level and converge towards it over time.
            }
-  \label{fig:exp}
-\end{figure*}
+  \label{fig:exp-imp}
+\end{figure}
 
-\section{Results II:\hspace{0.33em}Implicit threshold level}
-In \figsref{fig:chl-imp} and~\ref{fig:bgape-imp} we present the results of
-executing the implicit threshold algorithms on the two
-environmental monitoring datasets. The difficulty of estimating the
-function maximum at the same time as performing classification with respect to
-the implicit threshold level is manifested in the notably larger sampling cost
-of \iacl required to achieve high accuracy compared to the explicit threshold
-experiments. As before, the batch version of
-\iacl is only slightly worse that its sequential counterpart.
+\section{Results III:\hspace{0.33em}Path planning}
+We now present the results from applying our batch-based path planning
+algorithm on the two environmental monitoring datasets. Since path planning
+executions are costly, we used a fixed small value of $\epsilon$ for each
+dataset and executed the algorithm $30$ times for each of five different
+batch sizes, while measuring total traveled path length and $F_1$-score
+after each path planning iteration (similarly to what we did in
+\figref{fig:exp-rule}).
 
-More importantly, the naive \istr algorithm
-fails to achieve high accuracy, as it mostly infers wrong estimates of
-the function maximum and never recovers, since the (modified) straddle rule
-gives no incentive for sampling near the maximum.
-This is not very clear in the case of the chlorophyll dataset, because
-the function is fairly smooth in the vicinity of its maxima and, thus,
-\istr is able to obtain a rather accurate estimate of the function
-maximum.
-However, in the case of the algae dataset,
-as can be seen in \figref{fig:bgape-imp-istr-sc}, most
-of the executions of \istr achieve an $F_1$-score of only about
-0.8, even after $400$ samples. The inability of \istr to recover from a wrong
-threshold estimate is illustrated by the fact that most of these executions
-have already achieved this $F_1$-score after less than $100$ samples, but show
-no tendency for improvement thereafter. The behavior of \iacl depicted in
-more detail in \figref{fig:bgape-imp-istr-sc} is very different
-in that it starts considerably slower, but always achieves $F_1$-scores of
-at least $0.9$ after $400$ samples.
+\figref{fig:exp-pp} displays the dramatically reduced travel
+lengths by using batches of samples for path planning.
+For example, in \figref{fig:bgape-pp} we can see that
+planning with $B=30$ samples at a time achieves an $F_1$-score
+of $0.9$ after a travel length of about $4$ transect lengths,
+while planning with $B=5$ (or even worse sequentially) does
+not achieve that accuracy even after $15$ transect lengths.
+Also note that the effect of the batch size on the travel
+lengths seems to have a diminishing returns property
+(e.g. increasing from $B=5$ to $B=15$ makes a much larger
+difference than increasing from $B=15$ to $B=60$).
 
-\figref{fig:bgape-imp-istr-h} shows the estimated implicit threshold
-level for an example execution of \istr on the algae concentration
-dataset. Note that the inferred level
-is smaller than the true level $h = 7$ and, even worse, seems to
-deviate further away from the true level over time.
-In contrast, as shown in \figref{fig:bgape-imp-iacl-h}, the optimistic
-and pessimistic estimates used by \iacl correctly bound the true level
-from above and below respectively and get more accurate over time
-(as predicted by theory; cf. \lemmaref{lem:hdif}
-and~\lemmasref{lem:hopt}--\ref{lem:hpes}),
-thus allowing for better classification results.
+%\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
+%\input{figures/ev_bgape_pp.tex}
+%\input{figures/ev_chl_pp.tex}
+\renewcommand\trimlen{2pt}
+\begin{figure}[tb]
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_pp}
+    \caption{\textsf{[C]} Explicit threshold}
+	  \label{fig:chl-pp}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_pp}
+    \caption{\textsf{[A]} Explicit threshold}
+	\label{fig:bgape-pp}
+  \end{subfigure}
 
-Our \iacl simulations have shown that, as one might expect, the sooner
-the maximum of the function is accurately estimated the faster the
-algorithm converges to an accurate classification. Some preliminary
-experimentation with simple heuristics, such as sampling according
-to the \gpucb rule every $k_t$ steps (with $k_t$ starting small and
-increasing with time), leads to improved overall sampling costs and
-would be an interesting direction to explore theoretically.
-
-%\section{Results III:\hspace{0.33em}Path planning}
-%Finally, \figref{fig:chl-tsp} displays the dramatically lower required travel
-%length by using batches of samples for path planning: to achieve
-%an $F_1$-score of 0.95 using sequential sampling requires more than six times
-%larger traveling distance than planning ahead with $B = 30$
-%samples per batch.
+  \caption{Performance of the path planning algorithm for different batch
+           sizes on the two environmental monitoring datasets.
+           The total lengths of the sampling paths are normalized by the
+           lake transect length ($1478$ m).
+           Note the dramatically reduced travel lengths as the batch size is
+           increased ($B = 1$ corresponds to strictly sequential sampling).
+           }
+  \label{fig:exp-pp}
+\end{figure}

@@ -190,7 +190,7 @@ $h = \omega \max_{\*x\in D} f(\*x)$, that is
 \end{theorem}
 
 The detailed proof of \theoremref{thm:iacl} can be found in
-\sectref{sect:app_iacl}. Here we outline the main similarities and differences
+\appref{app:iacl}. Here we outline the main similarities and differences
 compared to the proof of \theoremref{thm:acl}.
 As in the explicit threshold case, using the maximum information gain $\gamma_t$,
 we show that $w_t(\*x_t)$ decreases as
@@ -362,20 +362,24 @@ an $\epsilon$-accurate solution, that is
 \end{theorem}
 
 The detailed proof of \theoremref{thm:bacl} can be found in
-\sectref{sect:app_bacl} and a completely analogous theorem can be
+\appref{app:bacl} and a completely analogous theorem can be
 formulated for extending \iacl to the batch setting.
 
 Note that, as intuitively described above, the scaling parameter
 $\eta_t$ has to increase by a factor of $e^C$ to compensate for the outdated
-mean estimates used in the confidence regions $C_t^b(\*x)$. Normally, $C$
-depends on the batch size $B$. However, \citet{desautels12} have shown that,
+mean estimates used in the confidence regions $C_t^b(\*x)$.
+The bound $C$ on the maximum conditional information gain depends on the
+GP kernel (``smoother'' kernel implies a lower value of $C$, since few
+measurements provide sufficient information to predict the values of $f$)
+and on the batch size $B$ (a larger batch size implies a higher value
+of $C$, because it allows for sampling more points and gaining more
+information about $f$).
+
+As a sidenote, \citet{desautels12} have shown that,
 initializing their \gpbucb algorithm with a number of sequentially selected
 maximum variance samples, results in a constant factor increase of $\eta_t$
 compared to $\beta_t$, independently of $B$.
-In the following chapter, we also use maximum variance initialization in our
-experiments, which allows us to select a constant value of $\eta_t$
-(larger than $\beta_t$)
-that works well across different batch sizes.
+However, we will not use initialization in our experiments.
 
 \section{Path planning} \label{sect:pp}
 Up to this point, we have assumed that obtaining a sample incurs a fixed
