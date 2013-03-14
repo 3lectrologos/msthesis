@@ -224,14 +224,15 @@ focuses on the ambiguous regions around the desired level set until all points
 in $D$ have been successfully classified.
 
 \section{Theoretical analysis}
-The convergence analysis of \acl rests on quantifying the complexity of the GP prior for $f$ in information-theoretic terms.
-The information gain~\cite{cover06} about $f$ from observing $t$ noisy
-measurements $\*y_t = (y_i)_{1\leq i\leq t}$ is
+The convergence analysis of \acl rests on quantifying the complexity of the
+GP prior for $f$ in information-theoretic terms.
+The information gain (cf. \chapref{ch:prelim}) about $f$ from observing
+$t$ noisy measurements $\*y_t = (y_i)_{1\leq i\leq t}$ is
 \begin{align*}
 I(\*y_t; f) = H(\*y_t) - H(\*y_t\mid f).
 \end{align*}
-\citet{srinivas10} used the \emph{maximum
-information gain} over all possible sets of $t$ observations
+\citet{srinivas10} used the maximum
+information gain over all possible sets of $t$ observations
 \begin{align*}
 \gamma_t = \max_{\*y_t} I(\*y_t; f)
 \end{align*}
