@@ -25,21 +25,22 @@ therefore the sampling locations have to be picked carefully, in order to
 reduce the total number of measurements required.
 
 %\setlength\figureheight{1.5in}\setlength\figurewidth{3.5in}
+%\input{figures/ch01/limno_chl.tex}
 %\input{figures/ch01/limno_chl_fp.tex}
 %\input{figures/ch01/limno_chl_res.tex}
 \renewcommand\trimlen{0pt}
 \begin{figure}[tb]
   \begin{subfigure}[b]{\linewidth}
     \centering
-    \adjincludegraphics[width=0.78\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch01/limno_chl_fp}
+    \adjincludegraphics[width=0.75\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch01/limno_chl}
     \caption{Ground truth}
     \label{fig:limno_chl}
   \end{subfigure}
   \begin{subfigure}[b]{\linewidth}
     \centering
     \vspace{12pt} % space of this row from above captions
-    \hspace{-2.3em}
-    \adjincludegraphics[width=0.717\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch01/limno_chl_res}
+    \hspace{-2.2em}
+    \adjincludegraphics[width=0.695\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch01/limno_chl_res}
     \caption{Estimated level set}
     \label{fig:limno_chl_res}
   \end{subfigure}
@@ -83,8 +84,7 @@ points into the super- and sublevel sets and, at the same time, sampling
 at regions of high ``ambiguity'', i.e. regions where there is high
 uncertainty about whether the value of the function lies above or below
 the specified threshold level. As a consequence, the vast majority of
-the sampled locations are concentrated near the level set to be estimated,
-as is clearly shown in the above figure.
+the sampled locations are concentrated near the level set to be estimated.
 
 Furthermore, we extend the \acl algorithm to two more settings that
 naturally arise in practical applications.
@@ -111,13 +111,14 @@ focuses on the ``ambiguous'' regions of the input space, at the same time
 it also heavily samples near the regions of the function maxima.
 
 %\setlength\figureheight{1.5in}\setlength\figurewidth{3.5in}
+%\input{figures/ch01/limno_bgape.tex}
 %\input{figures/ch01/limno_bgape_fp.tex}
 %\input{figures/ch01/limno_bgape_res.tex}
 \renewcommand\trimlen{0pt}
 \begin{figure}[tb]
   \begin{subfigure}[b]{\linewidth}
     \centering
-    \adjincludegraphics[width=0.8\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch01/limno_bgape_fp}
+    \adjincludegraphics[width=0.75\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch01/limno_bgape}
     \caption{Ground truth}
     \label{fig:limno_bgape}
   \end{subfigure}
@@ -125,7 +126,7 @@ it also heavily samples near the regions of the function maxima.
     \centering
     \vspace{12pt} % space of this row from above captions
     \hspace{-1.7em}
-    \adjincludegraphics[width=0.75\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch01/limno_bgape_res}
+    \adjincludegraphics[width=0.705\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ch01/limno_bgape_res}
     \caption{Estimated level set}
     \label{fig:limno_bgape_res}
   \end{subfigure}
@@ -155,7 +156,9 @@ significant increase in sampling throughput.
 The main contributions of this thesis can be summarized as follows:
 \begin{itemize}
 \item We introduce the \acl algorithm for sequentially estimating level sets
-      of unknown functions and also extend it to select samples in batches.
+      of unknown functions.
+\item We extend \acl to select samples in batches and present a straightforward
+      application of batch sampling for path planning.
 \item We consider for the first time the problem of estimating level sets under
       implicitly defined threshold levels and propose an extension of \acl
       for this problem.
