@@ -6,28 +6,29 @@ based on confidence bounds derived by modeling the target function
 as a GP. We considered for the first time the challenge of implicitly
 defined threshold levels and extended \acl to this more complex setting.
 We also showed how both algorithms can be extended to select samples
-in batches. In addition, we provided theoretical bounds on the number of
+in batches and applied this to a simple yet effective path-planning algorithm.
+In addition, we provided theoretical bounds on the number of
 iterations required to obtain an $\epsilon$-accurate solution when the target
 function is sampled from a known GP.
 The experiments on two real-world applications showed that \acl is
-competitive with the state-of-the-art and in some cases shows much improved
-results due to its more thorough exploration caused by its principled
-classification scheme. Furthermore, the extensions we presented are successful
+competitive with the state-of-the-art and in some cases shows improved
+performance. Furthermore, the extensions we presented are successful
 in handling the corresponding problem variants and perform significantly
 better than naive baselines. We believe our results provide an important step
 towards addressing complex real-world information gathering problems.
 
 \paragraph{Future work}
 As we have seen in the analysis of \iacl, its convergence to an accurate
-solution is largely dictated by the difference $h^{opt}_t - h^{pes}_t$
+solution is largely dictated by the gap $h^{opt}_t - h^{pes}_t$
 and its rate of decrease. The algorithm as presented gives in a sense
 ``equal weight'' to sampling from ambiguous regions near the estimated
 level set and to sampling near potential maximizers by using maximum
 variance sampling among the points in $Z_t$.
 However, we
 expect that biasing the search early toward maximizers would result
-in faster accurate estimates of the maximum, leading to lower values
-of the above difference and, therefore, faster overall convergence.
+in faster accurate estimates of the maximum, leading to a more rapid
+decrease
+of the above gap and, therefore, faster overall convergence.
 Some preliminary experiments with using \gpucb's selection rule
 every $k_t$ iterations, where $k_t$ starts with a small value and
 increases over time, justify the above claims and lead to improved
@@ -45,7 +46,7 @@ very costly), there is no easy way to incorporate this into our batch-based
 algorithm. In particular, one would have to take into account the
 estimated information gained from the additional samples when computing
 each path.
-Last, as can be seen in the example of \figref{fig:limno_bgape_ppbatch}
+Last, as can be seen in the example of \figref{fig:limno_bgape_ppbatch},
 the resulting TSP path may contain several abrupt changes of direction that
 are not achievable in practice due to kinematic constraints of the mobile
 sensor equipment.
