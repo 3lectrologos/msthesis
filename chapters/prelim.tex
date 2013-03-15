@@ -8,7 +8,7 @@ as well \citep[cf.][]{srinivas10}.}
 subset of $\mathbb{R}^d$, and a threshold level ${h \in \mathbb{R}}$,
 we define the \emph{level set estimation problem} as the problem of classifying
 every point $\*x \in D$ into a \emph{superlevel set}
-${H = \{\*x \in D \mid f(\*x) > h\}}$ and a \emph{sublevel set}
+$H = \{\*x \in D \mid f(\*x) > h\}$ and a \emph{sublevel set}
 ${L = \{\*x \in D \mid f(\*x) \leq h\}}$.
 
 When an explicit level is not available, we can define an
@@ -19,7 +19,7 @@ ${h = \omega \max_{\*x\in D} f(\*x)}$
 and $\omega \in (0, 1)$.
 
 In the \emph{strictly sequential} setting,
-at each step $t \geq 1$, we select a point $\*x_t \in D$ to be evaluated and
+at each step $t \geq 1$ we select a point $\*x_t \in D$ to be evaluated and
 obtain a noisy measurement $y_t = f(\*x_t) + n_t$.
 In the \emph{batch} setting we select $B$ points at a time and only obtain
 the resulting measurements after all of the $B$ points have been selected.
@@ -76,7 +76,7 @@ I(X; Y) = H(X) - H(X\mid Y),
 where $H(X)$ is the entropy of $X$ and $H(X\mid Y)$ is the conditional
 entropy of $X$ given $Y$.
 The information gain is symmetric, i.e. $I(X; Y) = I(Y; X)$, and,
-as can be seen from the above definition, it quantifies the (average) reduction
+as can be seen from the above definition, quantifies the (average) reduction
 in our uncertainty about $X$ when observing the value of $Y$ (and vice
 versa).
 
@@ -87,15 +87,15 @@ noisy observations $\*y_{1:t}$, which is
 I(f; \*y_{1:t}) = I(\*y_{1:t}; f) = H(\*y_{1:t}) - H(\*y_{1:t}\mid f).
 \end{align*}
 If we define $f_i = f(\*x_i)$, from the fact that
-$\*y_{1:t} = \*f_{1:t} + \*n_{1:t}$ is a sum of Gaussians, it follows that
-$\*y_{1:t} \sim \mathcal{N}\left(0, \*K_t + \sigma^2 I\right)$ and the
+$\*y_{1:t} = \*f_{1:t} + \*n_{1:t}$ is a sum of Gaussians it follows that
+$\*y_{1:t} \sim \mathcal{N}\left(0, \*K_t + \sigma^2 I\right)$, and the
 entropy of the noisy observations is
 \begin{align}\label{eq:hy}
 H(\*y_{1:t}) = \frac{1}{2}\log\left((2\pi e)^t |\*K_t + \sigma^2 I|\right).
 \end{align}
 Furthermore, note that the observations $\*y_{1:t}$ are conditionally
 independent of anything else given the underlying GP values
-of $\*f_{1:t}$ and
+of $\*f_{1:t}$ and distributed as
 $\*y_{1:t}\mid \*f_{1:t} \sim \mathcal{N}(\*f_{1:t}, \sigma^2 I)$.
 It follows that
 \begin{align}\label{eq:hyf}
