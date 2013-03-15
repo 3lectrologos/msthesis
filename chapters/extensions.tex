@@ -189,6 +189,10 @@ $h = \omega \max_{\*x\in D} f(\*x)$, that is
 \end{align*}
 \end{theorem}
 
+Note that the sample complexity bound of \theoremref{thm:iacl} is
+a factor ${(1+\omega)^2\leq 4}$ larger than that of \theoremref{thm:acl},
+and that $\omega=0$ actually reduces to an explicit threshold of $0$.
+
 The detailed proof of \theoremref{thm:iacl} can be found in
 \appref{app:iacl}. Here we outline the main similarities and differences
 compared to the proof of \theoremref{thm:acl}.
@@ -218,12 +222,8 @@ termination and $\epsilon$-accuracy need to be modified as follows.
       (\lemmasref{lem:hopt} and~\ref{lem:hpes}). This is the point
       where keeping all possible maximizers as sampling candidates in \iacl
       is formally required
-      (cf. \lemmasref{lem:fpes_inc} and \lemmaref{lem:mmeq}).
+      (\lemmasref{lem:fpes_inc} and \ref{lem:mmeq}).
 \end{description}
-
-Note that the sample complexity bound of \theoremref{thm:iacl} is a factor
-$(1+\omega)^2\leq 4$ larger than that of \theoremref{thm:acl}, and that
-$\omega=0$ actually reduces to an explicit threshold of $0$.
 
 \section{Batch sample selection} \label{sect:bacl}
 In the batch setting, the algorithms are only allowed to use the
@@ -250,7 +250,7 @@ Q_t^b(\*x) = \left[\mu_{\fb[t]}(\*x) \pm \eta_t^{1/2}\sigma_{t-1}(\*x)\right],
 which combine the most recent available mean estimate
 with the always up-to-date variance estimate.
 Here $\fb[t]$ is the index of the last available observation expressed
-using the feedback function $\fb$ introduced in \sectref{sect:prelim}.
+using the feedback function $\fb$ introduced in \chapref{ch:prelim}.
 Confidence regions $C_t^b(\*x)$ are
 defined as before by intersecting successive confidence intervals and are
 used without any further changes in the algorithms.
@@ -386,8 +386,8 @@ Up to this point, we have assumed that obtaining a sample incurs a fixed
 cost independent of its location in the input space $D$. However, in practical
 applications like the environmental monitoring example of \chapref{ch:intro},
 obtaining a sample also involves moving a mobile sensor to the desired
-location, which implies an additional traveling cost that depends on the
-measurement location. We present here a simple way for
+location, which implies an additional traveling cost that depends on
+that location. We present here a simple way for
 computing appropriate sampling paths based on the batch sampling
 extension of the previous section.
 
@@ -411,15 +411,16 @@ to the next versus the time it takes to obtain a measurement. In cases
 where the actual measurement time is large, we would use a smaller
 batch size, which would result in less samples that are more informative,
 while having larger traveling paths between measurements.
-In contrast, if measurements are fast, it pays off to use a larger batch
-size, in order to reduce the traveling distances, even if this results
-in more measurements in total.
+In contrast, if measurement time is negligible (which is the case in our
+environmental monitoring application), then it pays off to use a larger
+batch size in order to reduce the traveling distances, even if this
+results in a larger amount of total measurements.
 
 \figref{fig:limno_bgape_ppbatch} shows an example of our path planning
 procedure on the algae concentration dataset for a batch size of $B=30$.
 Note that, despite the simplicity of our algorithm, the computed path
 is reasonably spread across the ambiguous regions of the transect,
-although some smoothing might need to be applied if it is to be executed
+although some smoothing might need to be applied if it is to be traversed
 by a real robotic sensor.
 
 %\setlength\figureheight{1.5in}\setlength\figurewidth{2.5in}
