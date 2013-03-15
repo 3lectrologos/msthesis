@@ -28,7 +28,7 @@ In more detail, the algorithms and their setup are as follows.
   $\*x_t = \argmax_{\*x \in D} \sigma_{t-1}(\*x)$.
 \end{description}
 
-We implemented all algorithms in MATLAB and we used an approximate TSP
+We implemented all algorithms in MATLAB and used an approximate TSP
 solver based on genetic
 programming\footnote{\url{http://www.mathworks.com/matlabcentral/fileexchange/21198}}
 for the path planning evaluation.
@@ -69,7 +69,8 @@ and \emph{Planktothrix rubescens}\footnote{Planktothrix rubescens is a genus of
 blue-green algae that can produce toxins.}
 concentration respectively, which were collected by an autonomous surface
 vessel within a vertical transect plane of Lake Zurich \cite{hitz12}.
-Monitoring chlorophyll and algae concentration is useful in analyzing
+As mentioned in the introduction,
+monitoring chlorophyll and algae concentration is useful in analyzing
 limnological phenomena such as algal bloom. Since the concentration levels can
 vary throughout the year, in addition to having a fixed threshold
 concentration, it can also be useful to be able to detect
@@ -115,10 +116,11 @@ selected points, i.e.
 H_t &= \{\*x \in D \mid \mu_t(\*x) \geq h\}\\
 L_t &= \{\*x \in D \mid \mu_t(\*x) < h\}.
 \end{align*}
-On the other hand, \acl and its extensions were evaluated by repeatedly
+On the other hand, unless explicitly stated differently, \acl and its
+extensions were evaluated by repeatedly
 executing each algorithm for a range of values of the accuracy parameter
 $\epsilon$ and  recording the total number of samples and the $F_1$-score after
-each execution's termination (in total $2000$ executions per algorithm
+each execution's termination (in total about $2000$ executions per algorithm
 per dataset).
 The parameter $\epsilon$ was chosen to increase
 exponentially within a suitable range depending on the experiment (roughly
@@ -227,17 +229,17 @@ between $1\%$ and $20\%$ of the respective threshold level).
 \figsref{fig:ping-seq}--\ref{fig:bgape-seq} compare the performance of the
 strictly sequential algorithms on the three datasets.
 On the first two datasets \acl and \str are comparable in performance, with
-\acl being slightly better on the chorophyll dataset and slightly worse
-on the latency dataset. However, the situation is different in the third
+\acl doing slightly worse
+on the latency dataset. However, the situation is different on the third
 dataset, where \str performs extremely poorly. The reason is that the
-algorithm can get stuck in situations where it is favorable according to
-the straddle score to continue sampling points near the currently inferred
+algorithm can get stuck in situations where, according to the straddle score,
+it is favorable  to continue sampling points near the currently inferred
 level set, instead of sampling points of high variance at yet unexplored
-regions that lie far away from the currently inferred level set.
+regions that lie far away from that level set.
 
 \figref{fig:bgape-str-class} shows an example of such an execution, where
 \str has heavily sampled the left region of the level set, but has
-completely missed the part of the level set that lies on the right of the
+completely missed the part that lies on the right of the
 transect (cf. \figref{fig:limno_bgape}).
 In \figref{fig:bgape-seq-str-sc} we depict as a scatter plot the
 detailed results of the $50$ \str executions. Note that about a third
@@ -261,8 +263,9 @@ we present in \figref{fig:exp-eps} two scatter plots, similar to the one in
 \figref{fig:bgape-seq-acl-sc}, that depict the results of running \acl
 on the two environmental monitoring datasets for different values of
 $\epsilon$. As before, each point in the plot corresponds to the result of
-one execution of \acl, but now we have colored the points according to the
-value of $\epsilon$ used in that execution. In our theoretical analysis
+one execution of \acl, but in the new figures we have colored the points
+according to the
+value of $\epsilon$ used for each execution. In our theoretical analysis
 we have seen that $\epsilon$ represents a tradeoff parameter between
 classification accuracy and sampling cost. The two scatter plots
 give experimental evidence that this is indeed the case and, moreover,
@@ -369,8 +372,9 @@ we compare the performance
 of \acl using different sample selection rules (\lineref{lin:sel1} of
 \algoref{alg:acl}). In particular, we compare the maximum ambiguity
 rule (as presented in \acl), the maximum variance rule
-(which we use in \iacl), and the rule of randomly choosing the next
-sample from $U_t$.
+(which we also use in \iacl), and the rule of randomly choosing the next
+sample from $U_t$. According to the above figures, all three rules seem to
+be performing almost equally well on all three datasets.
 
 To further investigate the potential effect of the sampling rules, we also
 ran a different set of experiments, where, instead of varying $\epsilon$
@@ -392,10 +396,10 @@ To connect the above observations with the operation of \acl, recall
 that the algorithm is largely based on the progressive classification of
 points into $H_t$ and $L_t$, a process that focuses the selection of the next
 sample at each step on a set of ``interesting'' (w.r.t. to the sought after
-level set), yet unclassified points $U_t$. The
+level set), yet unclassified points $U_t$. On the other hand, the
 way in which the sample is selected from $U_t$ seems to be of secondary
 importance and selecting using maximum ambiguity might provide a small
-performance benefit.
+performance benefit in some cases.
 
 %\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
 %\input{figures/ev_ping_batch.tex}
@@ -450,7 +454,7 @@ of the explicit threshold batch algorithms on the three datasets. The \bacl
 and \bstr algorithms,
 which use the always up-to-date variance estimates for selecting batches,
 achieve similar performance. Furthermore, there is only a slight performance
-penalty when compared to the strictly sequential \str, which can easily be
+penalty when compared to the strictly sequential \acl, which can easily be
 outweighed by the benefits of batch point selection (e.g. in the network
 latency application, the batch algorithms would have about $B = 30$ times
 higher throughput). On the other hand, as expected, the \rstr algorithm
@@ -474,10 +478,10 @@ the function maximum and never recovers, since the (modified) straddle rule
 gives no incentive for sampling near the maximum.
 This is not very clear in the case of the chlorophyll dataset, because
 the function is fairly smooth in the vicinity of its maxima and, thus,
-\istr is able to obtain a rather accurate estimate of the function
-maximum.
-However, in the case of the algae dataset,
-as can be seen in \figref{fig:bgape-imp-istr-sc}, most
+\istr is usually lucky enough to obtain a rather accurate estimate of the
+function maximum.
+However, as can be seen in \figref{fig:bgape-imp-istr-sc},
+in the case of the algae dataset most
 of the executions of \istr achieve an $F_1$-score of only about
 0.8, even after $400$ samples. The inability of \istr to recover from a wrong
 threshold estimate is illustrated by the fact that most of these executions
@@ -498,14 +502,6 @@ from above and below respectively and get more accurate over time
 (as predicted by theory; cf. \lemmaref{lem:hdif}
 and~\lemmasref{lem:hopt}--\ref{lem:hpes}),
 thus allowing for better classification results.
-
-Our \iacl simulations have shown that, as one might expect, the sooner
-the maximum of the function is accurately estimated the faster the
-algorithm converges to an accurate classification. Some preliminary
-experimentation with simple heuristics, such as sampling according
-to the \gpucb rule every $k_t$ steps (with $k_t$ starting small and
-increasing with time), leads to improved overall sampling costs and
-would be an interesting direction to explore theoretically.
 
 %\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
 %\input{figures/ev_chl_imp.tex}
