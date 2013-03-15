@@ -15,8 +15,8 @@ monitoring a lake environment (in our case Lake Zurich) for algal bloom,
 a phenomenon that is potentially harmful to other organisms of the ecosystem.
 One way to accomplish this is by
 determining the regions of the lake where the levels of algae-produced
-chlorophyll (see \figref{fig:limno_chl}) and
-algae (see \figref{fig:limno_bgape}) concentration lie above some threshold
+chlorophyll (see \figref{fig:limno_chl}) or the concentration of the algae
+themselves (see \figref{fig:limno_bgape}) lie above some threshold
 value determined by field experts.
 These regions can be estimated by sampling
 at various locations of the lake using a mobile sensing device.
@@ -74,19 +74,20 @@ which utilizes Gaussian processes~\cite{rasmussen06} to model the target
 function and exploits inferred variance estimates to create confidence bounds
 and drive the selection process.
 We also provide an information-theoretic bound
-on the number of measurements needed to achieve a certain accuracy,
+on the number of measurements needed to achieve a certain accuracy
 when the underlying function is sampled from a known Gaussian process.
 
-\figref{fig:limno_chl_res} shows the estimated super- and sublevel sets
-resulting from running \acl on the chlorophyll concentration dataset of
-\figref{fig:limno_chl}. Intuitively, \acl works by progressively classifying
+\figref{fig:limno_chl_res} shows an example of estimated super- and sublevel
+sets resulting from running \acl on the chlorophyll concentration dataset of
+\figref{fig:limno_chl} for a specified threshold level. Intuitively, \acl works
+by progressively classifying
 points into the super- and sublevel sets and, at the same time, sampling
 at regions of high ``ambiguity'', i.e. regions where there is high
 uncertainty about whether the value of the function lies above or below
 the specified threshold level. As a consequence, the vast majority of
 the sampled locations are concentrated near the level set to be estimated.
 
-Furthermore, we extend the \acl algorithm to two more settings that
+We also extend the \acl algorithm to two more settings that
 naturally arise in practical applications.
 In the first setting, we do not a priori have a specific threshold level
 at our disposal, but would still like to perform level set estimation with
@@ -95,17 +96,17 @@ of the function maximum. In the environmental monitoring application outlined
 above, we might want to estimate regions of relatively high algae
 concentration, where what is considered as ``high'' concentration might
 depend on the season of the year or other environmental factors. Using
-an implicit threshold level gives us a way to obtain useful information
+an implicit level gives us a way to obtain useful information
 without the need to hardcode a prespecified threshold level of interest
 into the algorithm.
 
 \figref{fig:limno_bgape_res} shows the estimated super- and sublevel sets
-resulting from running \acl on the chlorophyll concentration dataset of
+resulting from running \acl on the algae concentration dataset of
 \figref{fig:limno_bgape} using an implicit threshold level of $75\%$ of
-the maximum. While the element of gradual classification of the explicit
-threshold algorithm is also present in the implicit version, there is an
-additional
-complexity of estimating the function maximum, in order to obtain accurate
+the maximum. The element of gradual classification of the explicit
+threshold algorithm is also present in the implicit version, but there is
+an additional
+complexity of estimating the function maximum in order to obtain accurate
 estimates of the implicit level. Therefore, while the algorithm still
 focuses on the ``ambiguous'' regions of the input space, at the same time
 it also heavily samples near the regions of the function maxima.
@@ -140,10 +141,10 @@ it also heavily samples near the regions of the function maxima.
   \label{fig:limno_bgape_all}
 \end{figure}
 
-The second extension applies to both the explicit and implicit versions of
-the algorithm and aims at selecting at each step a \emph{batch} of next
-samples, rather than just one sample at a time. A reason for doing so is that,
-in problems such as the lake sensing example outlined above,
+The second extension we propose applies to both the explicit and implicit
+versions of the algorithm and aims at selecting at each step a \emph{batch} of
+next samples, rather than just one sample at a time. A reason for doing so is
+that, in problems such as the lake sensing example outlined above,
 apart from the cost of actually taking each measurement, we
 also have to take into account the cost incurred by traveling from one
 sampling location to the next. Traveling costs can be dramatically reduced,
@@ -165,5 +166,5 @@ The main contributions of this thesis can be summarized as follows:
 \item We prove theoretical convergence bounds for \acl and its two
       extensions when the target function is sampled from a known GP.
 \item We evaluate \acl and its extensions on three real-world datasets and show
-      that they are competitive with the state-of-the-art.
+      that our proposed algorithms are competitive with the state-of-the-art.
 \end{itemize}
