@@ -587,21 +587,24 @@ after each path planning iteration (similarly to what we did in
 
 \figref{fig:exp-pp} displays the dramatically reduced travel
 lengths by using batches of samples for path planning.
-For example, in \figref{fig:bgape-pp} we can see that
+As an example, in \figref{fig:bgape-pp} we can see that
 planning with $B=30$ samples at a time achieves an $F_1$-score
 of $0.9$ after a travel length of about $4$ transect lengths,
 while planning with $B=5$ (or even worse sequentially) does
 not achieve that accuracy even after $15$ transect lengths.
 Also note that the effect of the batch size on the travel
-lengths seems to have a diminishing returns property
-(e.g. increasing from $B=5$ to $B=15$ makes a much larger
-difference than increasing from $B=15$ to $B=60$).
+lengths seems to have a diminishing returns property:
+for example, increasing from $B=5$ to $B=15$ makes in all
+cases a notably larger
+difference than increasing from $B=15$ to $B=60$.
 
 %\setlength\figureheight{1.3in}\setlength\figurewidth{2.1in}
-%\input{figures/ev_bgape_pp.tex}
 %\input{figures/ev_chl_pp.tex}
+%\input{figures/ev_bgape_pp.tex}
+%\input{figures/ev_chl_imp_pp.tex}
+%\input{figures/ev_bgape_imp_pp.tex}
 \renewcommand\trimlen{2pt}
-\begin{figure}[tb]
+\begin{figure}[b]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_pp}
@@ -614,6 +617,21 @@ difference than increasing from $B=15$ to $B=60$).
     \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_pp}
     \caption{\textsf{[A]} Explicit threshold}
 	\label{fig:bgape-pp}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \vspace{12pt} % space of this row from above captions
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_chl_imp_pp}
+    \caption{\textsf{[C]} Implicit threshold}
+	  \label{fig:bgape-imp-istr-h}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \adjincludegraphics[width=\linewidth,clip=true,trim=\trimlen{} \trimlen{} \trimlen{} \trimlen{}]{figures/ev_bgape_imp_pp}
+    \caption{\textsf{[A]} Implicit threshold}
+	\label{fig:bgape-imp-iacl-h}
   \end{subfigure}
 
   \caption{Performance of the path planning algorithm for different batch
