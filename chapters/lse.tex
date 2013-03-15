@@ -158,7 +158,8 @@ it follows from the the classification rules of \acl that
 \end{align*}
 Ambiguity values close to $w_t(\*x)/2$ indicate that the confidence region of
 $\*x$ extends almost equally above and below the threshold level $h$, while
-values close to $\epsilon$ indicate that $\*x$ is close to being classified
+values close to $\epsilon$ indicate that $\*x$ can almost unambiguously
+be classified
 into $H_t$ or $L_t$ (see \figref{fig:amb}).
 
 We can make an interesting observation at this point. If we use the confidence
@@ -287,7 +288,7 @@ The detailed proof of \theoremref{thm:acl} can be found in
       as $\mathcal{O}((\frac{\beta_t \gamma_t}{t})^\frac{1}{2})$.
 \item[Termination.] We show that the classification rules guarantee that the
       algorithm terminates when $a_t(\*x_t)$ is sufficiently small.
-      The fact that this will eventually happen is implied from
+      The fact that this will eventually happen is implied by
       the previous step.
 \item[``Valid'' confidence regions.] We guarantee that $f(\*x)$ is included
       with high probability in the inferred
@@ -312,8 +313,8 @@ Note that bounds on $\gamma_t$ have been established for commonly used
 kernels~\cite{srinivas10} and can be plugged into \theoremref{thm:acl}
 to obtain concrete bounds on $T$.
 For example, for a \mbox{$d$-dimensional} sample space and a squared exponential
-GP kernel, ${\gamma_t = \mathcal{O}((\log T)^{d+1})}$, and the expression in
-the bound of
+GP kernel, ${\gamma_t = \mathcal{O}((\log T)^{d+1})}$.
+Consequently, the expression in the bound of
 \theoremref{thm:acl} becomes $T/(\log T)^{d+2} \geq C / \epsilon^2$,
 where, for any given sample space and kernel hyperparameters, $C$ depends
 only on the choice of $\delta$.
