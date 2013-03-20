@@ -76,7 +76,7 @@ $\hat{H}$ and $\hat{L}$ are returned (\linesref{lin:ret1}{lin:ret2}).
       \ENDIF \label{lin:class2}
     \ENDFOR
     \LET{$\*x_t$}{$\argmax_{\*x \in U_t}(a_t(\*x))$} \label{lin:sel1}
-    \LET{$y_t$}{$f(\*x_t) + \nu_t$} \label{lin:sel2}
+    \LET{$y_t$}{$f(\*x_t) + n_t$} \label{lin:sel2}
     \STATE Compute $\mu_t(\*x)$ and $\sigma_t(\*x)$, for all $\*x \in U_t$ \label{lin:inf}
     \LET{$t$}{$t + 1$}
   \ENDWHILE
@@ -309,11 +309,11 @@ The detailed proof of \theoremref{thm:acl} can be found in
       previous step.
 \end{description}
 
-Note that bounds on $\gamma_t$ have been established for commonly used
+Note that bounds on $\gamma_T$ have been established for commonly used
 kernels~\cite{srinivas10} and can be plugged into \theoremref{thm:acl}
 to obtain concrete bounds on $T$.
 For example, for a \mbox{$d$-dimensional} sample space and a squared exponential
-GP kernel, ${\gamma_t = \mathcal{O}((\log T)^{d+1})}$.
+GP kernel, ${\gamma_T = \mathcal{O}((\log T)^{d+1})}$.
 Consequently, the expression in the bound of
 \theoremref{thm:acl} becomes $T/(\log T)^{d+2} \geq C / \epsilon^2$,
 where, for any given sample space and kernel hyperparameters, $C$ depends

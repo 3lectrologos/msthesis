@@ -87,7 +87,7 @@ again, relaxed by an accuracy parameter $\epsilon$.
     \LET{$Z_t$}{$U_t \cup M^H_t \cup M^L_t$}
     }
     \LET{$\*x_t$}{$\argmax_{\*x \in \new{Z_t}}(\new{w_t}(\*x))$}
-    \LET{$y_t$}{$f(\*x_t) + \nu_t$} \label{lin:sel2}
+    \LET{$y_t$}{$f(\*x_t) + n_t$} \label{lin:sel2}
     \STATE Compute $\mu_t(\*x)$ and $\sigma_t(\*x)$, for all $\*x \in U_t$ \label{lin:inf}
     \LET{$t$}{$t + 1$}
   \ENDWHILE
@@ -297,7 +297,7 @@ The batch extension of \iacl works in a completely analogous way.
     \new{
     \IF{$\fb[t+1] > t_{\fb}$}
       \FOR{$i = t_{\fb}+1,\ldots,\fb[t+1]$} \label{lin:bsample1}
-        \LET{$y_i$}{$f(\*x_i) + \nu_i$}
+        \LET{$y_i$}{$f(\*x_i) + n_i$}
       \ENDFOR \label{lin:bsample2}
       \STATE Compute $\mu_t(\*x)$ for all $\*x \in U_t$
       \LET{$t_{\fb}$}{$\fb[t+1]$}
