@@ -2,7 +2,7 @@
 
 \begin{tikzpicture}[node distance=1cm, auto,]
  %nodes
- \node[st] (conv) {Convergence of \acl};
+ \node[st] (conv) {Convergence};
    
  \node[st,below=3em of conv] (clas) {All points in $D$ have been classified}
    edge[pil] (conv);
@@ -32,9 +32,8 @@
  
  \node[st,below=3em of fit1] (gamma)
  {\makecell[c]
-   {Quantify by max. information gain (Srinivas \emph{et al.}, 2010):\\[0.5em]
-    $\gamma_t = \max_{\*y_t} I(\*y_{1:t}; f)$\\[0.5em]
-    For SE kernel $\gamma_t \sim \mathcal{O}\left((\log t)^{d+1}\right)$
+   {Quantify by max. information gain\\[0.5em]
+    $\gamma_t = \max_{\*y_t} I(\*y_{1:t}; f)$
    }
  } edge[pil] (fit1);
  
@@ -56,7 +55,7 @@
    edge[pil] (est)
    edge[pil,<-] (t4);
    
- \node[st,right=1.5em of clas,fill=col1] (eps) {$\epsilon$}
+ \node[st,right=1em of clas,fill=col1] (eps) {$\epsilon$}
    edge[pil] (amb)
    edge[pil] (loss);
 \end{tikzpicture}
