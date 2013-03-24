@@ -276,8 +276,23 @@ an $\epsilon$-accurate solution, that is
 \end{align*}
 \end{theorem}
 
+%\setlength\figureheight{1.5in}\setlength\figurewidth{2.5in}
+%\input{figures/ch02/proof_outline.tex}
+%\renewcommand\trimlen{0pt}
+\begin{figure}[b]
+  \centering
+  \adjincludegraphics[width=\linewidth]{figures/ch02/proof_outline}
+  \caption{A high-level outline of the theoretical analysis of \acl.
+           Note the two tuning parameters in green that connect convergence
+           and accuracy: $\beta_t$ is fixed given the choice of $\delta$,
+           while $\epsilon$ is free and trades off sampling cost for
+           accuracy.}
+  \label{fig:proof-outline}
+\end{figure}
+
 The detailed proof of \theoremref{thm:acl} can be found in
-\appref{app:acl}. We outline here the main steps required.
+\appref{app:acl}. We outline here the main steps required
+(cf. \figref{fig:proof-outline}).
 
 \begin{description}
 \item[Decreasing ambiguities.] We show that the ambiguities of the selected

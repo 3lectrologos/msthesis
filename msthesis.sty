@@ -225,8 +225,12 @@
 % Tikz figures setup
 % -----------------------------------------------------------------------------
 
+\RequirePackage{tikz}
 \RequirePackage{pgfplots}
-\usetikzlibrary{external}
+\RequirePackage{makecell}
+
+\usetikzlibrary{arrows,positioning,shapes,fit,external}
+
 \tikzset{external/system call={xelatex --enable-write18 -halt-on-error -interaction=batchmode -jobname "\image" "\texsource"}}
 \tikzset{external/force remake}
 \tikzexternalize
@@ -235,6 +239,25 @@
 \pgfplotsset{plot coordinates/math parser=false}
 \newlength\figureheight
 \newlength\figurewidth
+
+\tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    st/.style={
+           rectangle,
+           %rounded corners,
+           draw=black, very thick,
+           %text width=6.5em,
+           minimum height=2em,
+           text centered},
+    % Define arrow style
+    pil/.style={
+           ->,
+           thick,
+           shorten <=2pt,
+           shorten >=2pt,}
+}
 
 
 % -----------------------------------------------------------------------------
